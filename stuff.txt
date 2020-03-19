@@ -1,0 +1,33 @@
+Doctor:
+    actions:
+        share consents with other user
+
+    pages:
+        signup
+        profile
+        password_change
+        password_reset
+        delete(?)
+
+Consent fields:
+    Name
+    Doctor's Name
+    Relation to patient
+    Current date
+    Reason for inability to consent (unconscious, etc - could be null)
+    UUID 
+    video password
+
+Log in
+    using health.slu.edu email
+
+Create new consent
+    form to populate fields
+    record video
+    compress and password protect video
+    send video to s3
+    archive
+
+View an existing consent 
+    Index by various means
+        Patient name, DOB, UUUID

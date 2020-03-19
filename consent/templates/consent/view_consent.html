@@ -1,0 +1,44 @@
+{% extends 'consent/base.html' %} {% block title %}View Patient Consent Form{% endblock %} {% block content %}
+
+<div class="page-header">
+    <h1>Patient: {{ consent.patient_name }}</h1>
+    <P>{{ request.build_absolute_uri }}</P>
+    {% if not consent.nurse_signature %}
+    <p>Awaiting signature from {% if consent.nurse %}RN {{ consent.nurse.first_name }} {{ consent.nurse.last_name }}{% else %}any nurse{% endif %}</p>
+    {% endif %}
+    {% if not consent.physician_signature %}
+    <p>Awaiting signature from Dr. {{ consent.physician.first_name }} {{ consent.physician.last_name }}</p>
+    {% endif %}
+</div>
+<div>
+    <h3>Operation: {{ consent.operation.name }}</h3> 
+    <h3>Patient date of birth: {{ consent.patient_dob}}</h3>
+    <h3>Physician: {{ consent.physician.name}}</h3>
+    <video src="{% url 'view_consent_video' consent.id %}" width="100%" height="500px" controls></video>
+</div>
+
+<h2>Nurse Signature</h2>
+{% if consent.nurse_signature %}
+<p>Signed by {{ consent.nurse.first_name }} {{ consent.nurse.last_name }}</p>
+{% elif is_nurse %}
+<form action="{% url 'nurse_sign' consent.id %}" method="post" class="input-group">
+    {% csrf_token %}
+    <input type="submit" value="Sign as {{ user.first_name }} {{ user.last_name }}">
+</form>
+{% else %}
+<p>Awaiting {{ consent.nurse.first_name }} {{ consent.nurse.last_name }}'s signature</p>
+{% endif %}
+<h2>Physician Signature</h2>
+{% if consent.physician_signature %}
+<p>Signed by {{ consent.physician.first_name }} {{ consent.physician.last_name }}</p>
+{% elif is_doctor %}
+<form action="{% url 'physician_sign' consent.id %}" method="post" class="input-group">
+    {% csrf_token %}
+    <input type="submit" value="Sign as {{ user.first_name }} {{ user.last_name }}">
+</form>
+{% else %}
+<p>Awaiting {{ consent.physician.first_name }} {{ consent.physician.last_name }}'s signature</p>
+{% endif %}
+
+
+{% endblock %}%

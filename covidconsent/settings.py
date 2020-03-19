@@ -25,7 +25,7 @@ SECRET_KEY = 'y0hvi9944!(^4k4v-_g9#)av_3t0!sj*jaj*paa6z+l5jx_72y'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["[2600:6c40:500:ebfe::5]", "localhost", "dev1.innovationdx.com"]
 
 
 # Application definition
@@ -37,6 +37,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'consent.apps.ConsentConfig',
+    'portal.apps.PortalConfig',
+    'bootstrap3',
 ]
 
 MIDDLEWARE = [
@@ -118,3 +121,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+LOGIN_URL = '/portal/login/'
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/portal/login/'
