@@ -55,6 +55,9 @@
                     {% comment %} {% endif %} {% endcomment %}
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
+                    {% if 'institution_id' in request.session %}
+                    <li><a href="#">Connected from {{ request.session.institution_name }}</a></li>
+                    {% endif %}
                     {% if user.is_active %}
                     <li><a href="#">Signed in as {{ user.first_name }} {{ user.last_name }}</a></li>
                     <li><a role="button" href="{% url 'logout' %}">Log out</a></li>

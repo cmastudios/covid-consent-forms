@@ -1,0 +1,28 @@
+{% extends 'consent/base.html' %} {% load bootstrap3 %}
+{% block title %}Select your institution{% endblock %} {% block content %}
+<div class="page-header">
+    <h1>Select your Institition</h1>
+    <p>Please select your institution to continue.</p>
+</div>
+
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+<form method="post" enctype="multipart/form-data" class="input-group">
+    {% csrf_token %}
+    {% bootstrap_form form %}
+    <div class="g-recaptcha" data-sitekey="6LfL7SUUAAAAAOGOBZ5AZ4wV2ajMjMaVDvrajWu_"></div>
+    {% buttons %}
+    <button type="submit" class="btn btn-primary">
+        Verify
+    </button>
+    {% endbuttons %}
+</form>
+
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+{% endblock %}
