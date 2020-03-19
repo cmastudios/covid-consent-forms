@@ -1,0 +1,14 @@
+{% extends 'consent/base.html' %} {% load bootstrap3 %}
+{% block title %}Sign{% endblock %} {% block content %}
+<p>Upload a traditional signature (picture of your handwritten signature) or a video signature (audio/video presentation of consent).</p>
+<p>You are signing {{ consent }} as a {{ signature_type }}.</p>
+<form method="post" enctype="multipart/form-data" class="input-group">
+    {% csrf_token %}
+    {% bootstrap_form form %}
+    {% buttons %}
+        <button type="submit" class="btn btn-primary">
+            Submit
+        </button>
+    {% endbuttons %}
+</form>
+{% endblock %}

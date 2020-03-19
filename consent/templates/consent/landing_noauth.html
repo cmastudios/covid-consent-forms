@@ -1,0 +1,22 @@
+{% extends 'consent/base.html' %} {% block title %} SLU Health Online Consent Portal{% endblock %} {% block content %}
+<div>
+    <div class="page-header">
+        <h1>Create a new form</h1>
+    </div>
+    <div style="display: inline-block;">
+        <a style="padding: 15px 25px; margin-right:10px;" class="btn btn-primary" href="/consent/patient_form/create/" role="button">Create consent form</a> 
+        <a style="padding: 15px 25px; margin-left:10px;" class="btn btn-primary" href="/consent/patient_form/" role="button">Retrieve consent form</a> 
+    </div>
+</div>
+<div>
+    <div class="page-header">
+        <h1>Consent Form Templates at your Institution</h1>
+        <a style="padding: 15px 25px; margin-left:10px;" class="btn btn-primary" href="/consent/operation/create/" role="button">Create a new template</a> 
+    </div>
+    <ul class="list-group">
+    {% for op in operations %}
+        <li class="list-group-item"><a href="/consent/operation/{{ op.id }}/">{{ op }}</a></li>
+    {% endfor %}
+    </ul>    
+</div>
+{% endblock %}

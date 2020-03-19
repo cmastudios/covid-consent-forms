@@ -1,0 +1,25 @@
+{% extends 'consent/base.html' %} {% load bootstrap3 %}
+{% block title %}Create Account{% endblock %} {% block content %}
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                Create Account
+            </div>
+            <div class="panel-body">
+                <form action="/portal/login/" method="post" class="input-group">
+                    {% csrf_token %}
+                    {% bootstrap_form form %}
+                    <div class="g-recaptcha" data-sitekey="6LfL7SUUAAAAAOGOBZ5AZ4wV2ajMjMaVDvrajWu_"></div>
+                    {% buttons %}
+                        <button type="submit" class="btn btn-primary">
+                            Create Account
+                        </button>
+                    {% endbuttons %}
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

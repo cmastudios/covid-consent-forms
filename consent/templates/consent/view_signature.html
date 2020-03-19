@@ -1,0 +1,12 @@
+{% extends 'consent/base.html' %} {% block title %}View Signature{% endblock %} {% block content %}
+
+<h1>{{ consent }}</h1>
+<p>This form was signed by {{ </p>
+
+{% if 'image' in file_type %}
+<img src="{% url 'view_signature_file' consent.id signature_type %}" width="100%" height="500px">
+{% elif 'video' in file_type %}
+<video src="{% url 'view_signature_file' consent.id signature_type %}" width="100%" height="500px" controls></video>
+{% endif %}
+
+{% endblock %}

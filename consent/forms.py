@@ -1,4 +1,4 @@
-from django.forms import ModelForm
+from django.forms import ModelForm, Form, FileField
 
 from .models import PatientConsent, Operation
 
@@ -16,24 +16,21 @@ from .models import PatientConsent, Operation
 # proceedure_name = models.CharField(max_length=256)
 
 class ConsentForm(ModelForm):
-    def __init__(self, user, *args, **kwargs):
-        super(ConsentForm, self).__init__(*args, **kwargs)
-        self.user = user
-
     class Meta:
         model = PatientConsent
+        fields = [
+            "consent_type", "patient_name", "patient_dob", "patient_mrn", "attending_physician", "consenting_physician", "witness_name", "procedure", "diagnosis", "risk_ben_alt", "anesthsia_type"
+            ]
         labels = {
-            "operation": "Operation", "patient_name": "Patient Name", "patient_dob": "Patient Date of Birth",
-            "inability": "Reason for Inability to Consent (if applicable)", "consent_video": "Consent Video",
-            "relative_name": "Name of Alternative Consenter (if applicable)",
-            "relationship_to_patient": "Alternative Consenter's Relationship to Patient (if applicable)"
+            "risk_ben_alt": "Risks, Benefits, and Alternatives",
+            "anesthsia_type": "Type of Anesthesia"
         }
-        
-        fields = ['operation', 'patient_name', 'patient_dob', 'physician', 'nurse', 'inability', "relative_name",
-                  "relationship_to_patient", "consent_video"]
-
 
 class OperationForm(ModelForm):
     class Meta: 
         model = Operation
         fields = ['name', 'consent_form']
+
+
+class SignatureForm(Form):
+    signature = FileField()

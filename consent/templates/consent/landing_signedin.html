@@ -1,0 +1,35 @@
+{% extends 'consent/base.html' %} {% block title %} SLU Health Online Consent Portal{% endblock %} {% block content %}
+<div>
+    <div class="page-header">
+        <h1>Create a new form</h1>
+    </div>
+    <div style="display: inline-block;">
+        <a style="padding: 15px 25px; margin-right:10px;" class="btn btn-primary" href="/consent/patient_form/create/" role="button">Create a new consent</a> 
+        <a style="padding: 15px 25px; margin-left:10px;" class="btn btn-primary" href="/consent/operation/create/" role="button">Create a new operation</a> 
+    </div>
+</div>
+
+<div class="page-header">
+    <h1>Needs your signature</h1>
+</div>
+{% for form in waiting %}
+    <li class="list-group-item"><a href="/consent/patient_form/{{ form.id }}/">{{ form.today_date }} :: {{ form.patient_name }}</a></li>
+{% endfor %}
+
+<div class="page-header">
+    <h1>Your signed consent forms</h1>
+</div>
+<ul class="list-group">
+{% for form in signed %}
+    <li class="list-group-item"><a href="/consent/patient_form/{{ form.id }}/">{{ form.today_date }} :: {{ form.patient_name }}</a></li>
+{% endfor %}
+</ul>
+<div class="page-header">
+    <h1>Registered Operations</h1>
+</div>
+<ul class="list-group">
+{% for op in operations %}
+    <li class="list-group-item"><a href="/consent/operation/{{ op.id }}/">{{ op }}</a></li>
+{% endfor %}
+</ul>
+{% endblock %}

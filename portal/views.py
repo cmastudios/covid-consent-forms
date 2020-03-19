@@ -58,6 +58,12 @@ def select_institution(request):
     return render(request, "portal/select_institution.html", {"form": form})
 
 
+def deselect_institution(request):
+    del request.session["institution_id"]
+    del request.session["institution_name"]
+    return redirect("select_institution")
+
+
 def get_client_ip(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
     if x_forwarded_for:

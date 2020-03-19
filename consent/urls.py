@@ -14,7 +14,6 @@ urlpatterns = [
     path('operation/<int:operation_id>/delete/', views.delete_operation, name='delete_operation'),
     path('patient_form/create/', views.new_form, name='new_consent_form'),
     path('patient_form/<int:form_id>/', views.view_form, name='view_consent_form'),
-    path('patient_form/<int:form_id>/nurse_sign/', views.nurse_sign, name='nurse_sign'),
-    path('patient_form/<int:form_id>/physician_sign/', views.physician_sign, name='physician_sign'),
-    path('patient_form/<int:form_id>/consent_video', views.view_consent_video, name='view_consent_video'),
+    path('patient_form/<int:form_id>/signature/<str:signature_type>/', views.view_signature, name='view_signature'),
+    path('patient_form/<int:form_id>/signature/<str:signature_type>/file', views.view_signature_file, name='view_signature_file'),
 ]
