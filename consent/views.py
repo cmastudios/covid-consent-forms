@@ -2,7 +2,7 @@ import mimetypes
 from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import FileResponse
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from .models import Operation, PatientConsent
 from .forms import ConsentForm, OperationForm, SignatureForm
 from portal.decorators import institution_required
@@ -23,6 +23,7 @@ def landing(request):
 
 
 @login_required
+@permission_required("consent.add_patientconsent")
 def new_form(request):
     if request.method == 'POST':
         form = ConsentForm(request.POST, request.FILES)
@@ -53,6 +54,7 @@ def new_form(request):
 
 
 @login_required
+@permission_required("consent.view_patientconsent")
 def view_form(request, form_id):
     consent = get_object_or_404(PatientConsent, pk=form_id)
     if consent.patient_signature is None or consent.patient_signature == "":
@@ -74,6 +76,7 @@ def view_form(request, form_id):
 
 
 @login_required
+@permission_required("consent.view_patientconsent")
 def view_signature(request, form_id, signature_type):
     consent = get_object_or_404(PatientConsent, pk=form_id)
     if signature_type == "patient":
@@ -112,6 +115,7 @@ def view_signature(request, form_id, signature_type):
 
 
 @login_required
+@permission_required("consent.view_patientconsent")
 def view_signature_file(request, form_id, signature_type):
     consent = get_object_or_404(PatientConsent, pk=form_id)
     if signature_type == "patient":
@@ -127,6 +131,7 @@ def view_signature_file(request, form_id, signature_type):
 
 
 @login_required
+@permission_required("consent.add_operation")
 def new_operation(request):
     if request.method == 'POST':
         form = OperationForm(request.POST, request.FILES)
@@ -144,12 +149,14 @@ def new_operation(request):
 
 
 @login_required
+@permission_required("consent.view_operation")
 def view_operation(request, operation_id):
     operation = get_object_or_404(Operation, pk=operation_id)
     return render(request, "consent/view_operation.html", {"operation": operation})
 
 
 @login_required
+@permission_required("consent.view_operation")
 def view_operation_template(request, operation_id):
     operation = get_object_or_404(Operation, pk=operation_id)
     path = operation.consent_form.path
@@ -157,6 +164,7 @@ def view_operation_template(request, operation_id):
 
 
 @login_required
+@permission_required("consent.delete_operation")
 def delete_operation(request, operation_id):
     operation = get_object_or_404(Operation, pk=operation_id)
     operation.delete()

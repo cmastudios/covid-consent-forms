@@ -1,11 +1,12 @@
 {% extends 'consent/base.html' %} {% block title %} SLU Health Online Consent Portal{% endblock %} {% block content %}
+{% if perms.consent %}
 <div>
     <div class="page-header">
         <h1>Create a new form</h1>
     </div>
     <div style="display: inline-block;">
-        <a style="padding: 15px 25px; margin-right:10px;" class="btn btn-primary" href="/consent/patient_form/create/" role="button">Create a new consent</a> 
-        <a style="padding: 15px 25px; margin-left:10px;" class="btn btn-primary" href="/consent/operation/create/" role="button">Create a new operation</a> 
+        <a style="padding: 15px 25px; margin-right:10px;" class="btn btn-primary" href="/consent/patient_form/create/" role="button">Create a new consent</a>
+        <a style="padding: 15px 25px; margin-left:10px;" class="btn btn-primary" href="/consent/operation/create/" role="button">Create a new operation</a>
     </div>
 </div>
 
@@ -32,4 +33,20 @@
     <li class="list-group-item"><a href="/consent/operation/{{ op.id }}/">{{ op }}</a></li>
 {% endfor %}
 </ul>
+
+{% else %}
+
+<div>
+    <div class="page-header">
+        <h1>Unverified account</h1>
+    </div>
+    <div>
+        <p>Your account is not verified, and thus you do not have access to consent forms.
+            Please check your email, {{ user.email }}, for a link to use to verify your affiliation.
+        </p>
+    </div>
+</div>
+
+{% endif %}
+
 {% endblock %}
