@@ -127,3 +127,9 @@ STATIC_URL = '/static/'
 LOGIN_URL = '/portal/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/portal/login/'
+
+EMAIL_HOST = os.getenv('SMTP_HOST', 'localhost')
+EMAIL_PORT = int(os.getenv('SMTP_PORT', '587'))
+EMAIL_HOST_USER = os.getenv('SMTP_USERNAME', None)
+EMAIL_HOST_PASSWORD = os.getenv('SMTP_PASSWORD', None)
+EMAIL_USE_TLS = os.getenv('SMTP_TLS', 'false').lower() in ('true', 'yes', '1')

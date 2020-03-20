@@ -1,33 +1,104 @@
 import ipaddress
 import os
+import smtplib
+import hashlib
 
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import Permission
+from django.core.mail import send_mail
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import authenticate, login, logout
 
-from portal.models import Institution, InstitutionNetwork
-from .forms import InstitutionForm
+from portal.models import Institution, InstitutionNetwork, InstitutionEmail
+from .forms import InstitutionForm, CreateUserForm
+from covidconsent import settings
 import requests
-
-
-def login_form(request):
-    if request.method == 'POST':
-        form = AuthenticationForm(data=request.POST)
-        if form.is_valid():
-            user = form.get_user()
-            login(request, user)
-
-            return redirect('index')
-    else:
-        form = AuthenticationForm()
-
-    return render(request, "portal/login.html", {"form": form})
 
 
 def logout_view(request):
     logout(request)
     return redirect("login")
+
+
+def create_verification_token(username):
+    m = hashlib.sha256()
+    m.update(settings.SECRET_KEY.encode("utf-8"))
+    m.update(username.encode("utf-8"))
+    return m.hexdigest()
+
+
+def check_verification_token(username, token):
+    return create_verification_token(username) == token
+
+
+def send_verification_email(username, email):
+    m = create_verification_token(username)
+    link = f"https://coviddemo.innovationdx.com/portal/verify/{m}/"
+    send_mail(
+        "Verify your email",
+        f"In order to access SLU Health Patient Consent Portal, you must verify your institutional affiliation. "
+        f"Use this link to verify your ownership of this email:\n"
+        f"{link}\n\n"
+        f"Thanks for using SLU Health Patient Consent Portal.\n"
+        f"Not expecting this email? Someone may have used your email address by mistake. Please disregard this message.",
+        "consentportal@innovationdx.com",
+        [email],
+        fail_silently=False,
+    )
+
+
+def signup_view(request):
+    if request.method == 'POST':
+        forms = CreateUserForm(request.POST)
+        if forms.is_valid():
+            username = forms.cleaned_data.get('username')
+            email = forms.cleaned_data.get('email')
+            raw_password = forms.cleaned_data.get('password1')
+            send_verification_email(username, email)
+            forms.save()
+            user = authenticate(username=username, password=raw_password)
+            login(request, user)
+            return redirect('index')
+    else:
+        return redirect('login')
+    forml = AuthenticationForm()
+    return render(request, 'portal/login.html', {'login': forml, 'signup': forms})
+
+
+def login_view(request):
+    if request.method == 'POST':
+        forml = AuthenticationForm(data=request.POST)
+        if forml.is_valid():
+            user = forml.get_user()
+            login(request, user)
+
+            return redirect('index')
+    else:
+        forml = AuthenticationForm()
+    forms = CreateUserForm()
+    return render(request, 'portal/login.html', {'login': forml, 'signup': forms})
+
+
+def password_reset_view(request):
+    pass
+
+
+@login_required
+def verification_view(request, token):
+    if check_verification_token(request.user.username, token):
+        permission = Permission.objects.get(name='Can add patient consent')
+        request.user.user_permissions.add(permission)
+        permission = Permission.objects.get(name='Can view patient consent')
+        request.user.user_permissions.add(permission)
+        messages.success(request, "Your account has been successfully verified.")
+        return redirect('index')
+    else:
+        messages.error(request, "Account verification was unsuccessful.")
+        return redirect('index')
+
+
 
 
 def select_institution(request):
@@ -47,7 +118,8 @@ def select_institution(request):
                     request.session["institution_name"] = institution.name
                     return redirect("index")
                 else:
-                    messages.error(request, f"You do not appear to be connected from {institution.name} (saw {clientip})")
+                    messages.error(request,
+                                   f"You do not appear to be connected from {institution.name} (saw {clientip})")
             else:
                 messages.error(request, "ReCAPTCHA failed.")
         else:
@@ -81,3 +153,5 @@ def check_client_ip_in_institution_network(clientip, institution):
         if clientip in networkip:
             return True
     return False
+
+

@@ -1,6 +1,12 @@
 {% extends 'consent/base.html' %} {% load bootstrap3 %}
 {% block title %}Login{% endblock %} {% block content %}
-
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
 <div class="row">
     <div class="col-md-6">
         <div class="panel panel-default">
@@ -8,12 +14,31 @@
                 Login
             </div>
             <div class="panel-body">
-                <form action="/portal/login/" method="post" class="input-group">
+                <form action="{% url 'login' %}" method="post" class="input-group">
                     {% csrf_token %}
-                    {% bootstrap_form form %}
+                    {% bootstrap_form login %}
                     {% buttons %}
                         <button type="submit" class="btn btn-primary">
                             Login
+                        </button>
+                    {% endbuttons %}
+                </form>
+                <p><a href="{% url 'password_reset' %}">Lost password?</a></p>
+            </div>
+        </div>
+    </div>
+        <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                Create an account
+            </div>
+            <div class="panel-body">
+                <form action="{% url 'signup' %}" method="post" class="input-group">
+                    {% csrf_token %}
+                    {% bootstrap_form signup %}
+                    {% buttons %}
+                        <button type="submit" class="btn btn-primary">
+                            Signup
                         </button>
                     {% endbuttons %}
                 </form>
