@@ -9,28 +9,30 @@
     <h3>Procedure: {{ consent.procedure }}</h3> 
     <h3>Diagnosis: {{ consent.diagnosis }}</h3> 
     <h3>Risks/benefits: {{ consent.risk_ben_alt }}</h3> 
-    <h3>Anesthesia: {{ consent.anesthsia_type }}</h3> 
+    <h3>Anesthesia: {{ consent.anesthsia_type }}</h3>
+    {% if not consent.has_any_signature %}
+    <a class="btn btn-primary" href="{% url 'edit_consent_form' consent.id %}" role="button">Edit This Form</a>
+    {% endif %}
 </div>
-
 <div>
     <div class="page-header">
         <h2>Signatures</h2>
     </div>
     <div>
         <h3>Patient</h3>
-        {% if consent.patient_signature and consent.patient_signature != '' %}
+        {% if consent.has_patient_signature %}
 
-        {% if consent.inability_reason and consent.inability_reason != '' %}
+        {% if consent.has_inability_reason %}
         Patient was unable to consent. Reason: {{ consent.inability_reason }}. Signed by physician.
-        {% elif consent.representative_name and consent.representative_name != '' %}
+        {% elif consent.has_relative %}
         Signed by {{ consent.representative_name }}. Relationship: {{ consent.relationship_to_patient }}.
         {% else %}
         Signed by patient.
         {% endif %}
 
-        {% if 'image' in patient %}
+        {% if 'image' in consent.patient_signature_file_mime %}
         <img src="{% url 'view_signature_file' consent.id 'patient' %}" width="100%" height="500px">
-        {% elif 'video' in patient %}
+        {% elif 'video' in consent.patient_signature_file_mime %}
         <video src="{% url 'view_signature_file' consent.id 'patient' %}" width="100%" height="500px" controls></video>
         {% endif %}
 
@@ -40,12 +42,12 @@
     </div>
     <div>
         <h3>Physician</h3>
-        {% if consent.physician_signature and consent.physician_signature != '' %}
+        {% if consent.has_physician_signature %}
         Signed by {{ consent.consenting_physician.first_name }} {{ consent.consenting_physician.last_name }}.
 
-        {% if 'image' in physician %}
+        {% if 'image' in consent.physician_signature_file_mime %}
         <img src="{% url 'view_signature_file' consent.id 'physician' %}" width="100%" height="500px">
-        {% elif 'video' in physician %}
+        {% elif 'video' in consent.physician_signature_file_mime %}
         <video src="{% url 'view_signature_file' consent.id 'physician' %}" width="100%" height="500px" controls></video>
         {% endif %}
 
@@ -55,12 +57,12 @@
     </div>
     <div>
         <h3>Witness</h3>
-        {% if consent.witness_signature and consent.witness_signature != '' %}
+        {% if consent.has_witness_signature %}
         Signed by {{ consent.witness_name.first_name }} {{ consent.witness_name.last_name }}.
 
-        {% if 'image' in witness %}
+        {% if 'image' in consent.witness_signature_file_mime %}
         <img src="{% url 'view_signature_file' consent.id 'witness' %}" width="100%" height="500px">
-        {% elif 'video' in witness %}
+        {% elif 'video' in consent.witness_signature_file_mime %}
         <video src="{% url 'view_signature_file' consent.id 'witness' %}" width="100%" height="500px" controls></video>
         {% endif %}
 
@@ -69,33 +71,4 @@
         {% endif %}
     </div>
 </div>
-
-{% comment %}
-<video src="{% url 'view_consent_video' consent.id %}" width="100%" height="500px" controls></video>
-
-<h2>Nurse Signature</h2>
-{% if consent.nurse_signature %}
-<p>Signed by {{ consent.nurse.first_name }} {{ consent.nurse.last_name }}</p>
-{% elif is_nurse %}
-<form action="{% url 'nurse_sign' consent.id %}" method="post" class="input-group">
-    {% csrf_token %}
-    <input type="submit" value="Sign as {{ user.first_name }} {{ user.last_name }}">
-</form>
-{% else %}
-<p>Awaiting {{ consent.nurse.first_name }} {{ consent.nurse.last_name }}'s signature</p>
-{% endif %}
-<h2>Physician Signature</h2>
-{% if consent.physician_signature %}
-<p>Signed by {{ consent.physician.first_name }} {{ consent.physician.last_name }}</p>
-{% elif is_doctor %}
-<form action="{% url 'physician_sign' consent.id %}" method="post" class="input-group">
-    {% csrf_token %}
-    <input type="submit" value="Sign as {{ user.first_name }} {{ user.last_name }}">
-</form>
-{% else %}
-<p>Awaiting {{ consent.physician.first_name }} {{ consent.physician.last_name }}'s signature</p>
-{% endif %}
-{% endcomment %}
-
-
 {% endblock %}%

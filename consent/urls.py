@@ -14,6 +14,7 @@ urlpatterns = [
     path('operation/<int:operation_id>/delete/', views.delete_operation, name='delete_operation'),
     path('patient_form/create/', views.new_form, name='new_consent_form'),
     path('patient_form/<int:form_id>/', views.view_form, name='view_consent_form'),
+    path('patient_form/<int:form_id>/edit/', views.edit_form, name='edit_consent_form'),
     path('patient_form/<int:form_id>/signature/<str:signature_type>/', views.view_signature, name='view_signature'),
     path('patient_form/<int:form_id>/signature/<str:signature_type>/file', views.view_signature_file, name='view_signature_file'),
 ]

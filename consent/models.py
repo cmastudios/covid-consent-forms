@@ -1,3 +1,4 @@
+import mimetypes
 import uuid
 
 from django.contrib.auth.models import User
@@ -58,5 +59,41 @@ class PatientConsent(models.Model):
 
     def __str__(self):
         return f"{self.today_date} :: {self.patient_name}"
+
+    @property
+    def has_patient_signature(self):
+        return self.patient_signature is not None and self.patient_signature != ""
+
+    @property
+    def has_physician_signature(self):
+        return self.physician_signature is not None and self.physician_signature != ""
+
+    @property
+    def has_witness_signature(self):
+        return self.witness_signature is not None and self.witness_signature != ""
+
+    @property
+    def has_any_signature(self):
+        return self.has_witness_signature or self.has_physician_signature or self.has_patient_signature
+
+    @property
+    def has_inability_reason(self):
+        return self.inability_reason is not None and self.inability_reason != ""
+
+    @property
+    def has_relative(self):
+        return self.representative_name is not None and self.representative_name != ""
+
+    @property
+    def patient_signature_file_mime(self):
+        return mimetypes.MimeTypes().guess_type(self.patient_signature.path)[0] if self.has_patient_signature else ""
+
+    @property
+    def physician_signature_file_mime(self):
+        return mimetypes.MimeTypes().guess_type(self.physician_signature.path)[0] if self.has_physician_signature else ""
+
+    @property
+    def witness_signature_file_mime(self):
+        return mimetypes.MimeTypes().guess_type(self.witness_signature.path)[0] if self.has_witness_signature else ""
 
 
