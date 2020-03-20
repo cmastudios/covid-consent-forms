@@ -1,12 +1,21 @@
 {% extends 'consent/base.html' %} {% load bootstrap3 %}
-{% block title %}New Operation{% endblock %} {% block content %}
+
+{% load crispy_forms_tags %}
+
+{%  load static %}
+
+{% block content %}
+    <div class="page-header">
+        <h1>Create a new Operation Consent Form</h1>
+    </div>
 <form method="post" enctype="multipart/form-data" class="input-group">
-    {% csrf_token %}
-    {% bootstrap_form form %}
-    {% buttons %}
-        <button type="submit" class="btn btn-primary">
-            {% bootstrap_icon "star" %} Submit
-        </button>
-    {% endbuttons %}
+{% csrf_token %}
+<div class="col-6">
+    {{ form.name | as_crispy_field }}
+</div>
+<div class="col-6" style="margin-top: 15px">
+    {{ form.consent_form | as_crispy_field }}
+</div>
+<button type="submit" class="btn btn-success" style="margin-top: 15px">Save Consent Form</button>
 </form>
 {% endblock %}

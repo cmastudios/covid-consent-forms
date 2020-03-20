@@ -1,18 +1,76 @@
 {% extends 'consent/base.html' %} {% load bootstrap3 %}
+
+{% load crispy_forms_tags %}
+
 {% block title %}New Consent{% endblock %} {% block content %}
 <form method="post" enctype="multipart/form-data" class="input-group">
     {% csrf_token %}
-    {% bootstrap_form form %}
     <p id="date"></p>
+    <p id="time"></p>
     <script>
         n =  new Date();
         y = n.getFullYear();
         m = n.getMonth() + 1;
         d = n.getDate();
         document.getElementById("date").innerHTML = "Today's date: " + m + "/" + d + "/" + y;
+        if (document.getElementById("able_to_consent").value === 1) {
+            document.getElementById("unable").disabled = true;
+            document.getElementById("rep_name").disabled = true;
+            document.getElementById("rel_to_pat").disabled = false;
+        } else {
+            document.getElementById("reason").disabled = false;
+            document.getElementById("rep_name").disabled = false;
+            document.getElementById("rel_to_pat").disabled = false;
+        }
     </script>
+    <div class="col-6" style="margin-bottom: 15px">
+        {{ form.consent_type | as_crispy_field }}
+    </div>
+    <div class="col-6" style="margin-top: 15px">
+        {{ form.patient_name | as_crispy_field }}
+    </div>
+    <div class="col-6" style="margin-top: 15px">
+        {{ form.patient_dob | as_crispy_field }}
+    </div>
+    <div class="col-6" style="margin-top: 15px">
+        {{ form.patient_mrn | as_crispy_field }}
+    </div>
+    <div class="col-6" style="margin-top: 15px">
+        {{ form.attending_physician | as_crispy_field }}
+    </div>
+    <div class="col-6" style="margin-top: 15px">
+        {{ form.consenting_physician | as_crispy_field }}
+    </div>
+    <div class="col-6" style="margin-top: 15px">
+        {{ form.witness_name | as_crispy_field }}
+    </div>
+    <div class="col-6" style="margin-top: 15px">
+        {{ form.procedure | as_crispy_field }}
+    </div>
+    <div class="col-6" style="margin-top: 15px">
+        {{ form.diagnosis | as_crispy_field }}
+    </div>
+    <div class="col-6" style="margin-top: 15px">
+        {{ form.risk_ben_alt | as_crispy_field }}
+    </div>
+    <div class="col-6" style="margin-top: 15px">
+        {{ form.anesthesia_type | as_crispy_field }}
+    </div>
+    <div class="col-6" style="margin-top: 15px">
+        {{ form.ability_to_consent | as_crispy_field }}
+    </div>
+    <div class="col-6" style="margin-top: 15px" id="reason">
+        {{ form.inability_reason | as_crispy_field }}
+    </div>
+    <div class="col-6" style="margin-top: 15px" id="rep_name">
+        {{ form.representative_name | as_crispy_field }}
+    </div>
+    <div class="col-6" style="margin-top: 15px" id="rel_to_pat">
+        {{ form.relationship_to_patient | as_crispy_field }}
+    </div>
+
     {% buttons %}
-        <button type="submit" class="btn btn-primary">
+        <button type="submit" class="btn btn-primary" style="margin-top: 15px">
             {% bootstrap_icon "star" %} Submit
         </button>
     {% endbuttons %}

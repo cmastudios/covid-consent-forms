@@ -25,7 +25,7 @@ SECRET_KEY = 'y0hvi9944!(^4k4v-_g9#)av_3t0!sj*jaj*paa6z+l5jx_72y'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["[2600:6c40:500:ebfe::5]", "localhost", "dev1.innovationdx.com"]
+ALLOWED_HOSTS = ["[2600:6c40:500:ebfe::5]", "localhost", "dev1.innovationdx.com", "127.0.0.1"]
 
 
 # Application definition
@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'consent.apps.ConsentConfig',
     'portal.apps.PortalConfig',
     'bootstrap3',
+    'crispy_forms'
 ]
 
 MIDDLEWARE = [
@@ -78,12 +79,19 @@ WSGI_APPLICATION = 'covidconsent.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'OPTIONS': {
-            'read_default_file': './my.cnf',
-        },
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'mydatabase',
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'OPTIONS': {
+#             'read_default_file': './my.cnf',
+#         },
+#     }
+# }
 
 
 # Password validation
@@ -127,9 +135,3 @@ STATIC_URL = '/static/'
 LOGIN_URL = '/portal/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/portal/login/'
-
-EMAIL_HOST = os.getenv('SMTP_HOST', 'localhost')
-EMAIL_PORT = int(os.getenv('SMTP_PORT', '587'))
-EMAIL_HOST_USER = os.getenv('SMTP_USERNAME', None)
-EMAIL_HOST_PASSWORD = os.getenv('SMTP_PASSWORD', None)
-EMAIL_USE_TLS = os.getenv('SMTP_TLS', 'false').lower() in ('true', 'yes', '1')

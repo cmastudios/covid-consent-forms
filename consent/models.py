@@ -15,8 +15,13 @@ ANESTHESIA_TYPE = (
     (1, "General Anesthesia"),
     (2, "Local Anesthesia"),
     (3, "Sedation"),
-    (4, "No Anethesia")
+    (4, "No Anesthesia")
 )
+
+ABLE_TO_CONSENT = {
+    (1, "Yes"),
+    (2, "No")
+}
 
 
 class Operation(models.Model):
@@ -42,13 +47,14 @@ class PatientConsent(models.Model):
     procedure = models.CharField(max_length=512)
     diagnosis = models.CharField(max_length=256)
     risk_ben_alt = models.CharField(max_length=4096)
-    anesthsia_type = models.IntegerField(choices=ANESTHESIA_TYPE, default=4)
+    anesthesia_type = models.IntegerField(choices=ANESTHESIA_TYPE, default=4)
 
     # deals with patient's (or other)'s signature
     patient_signature = models.FileField(upload_to="videos/", null=True, blank=True)
+    ability_to_consent = models.IntegerField(choices=ABLE_TO_CONSENT, default=1)
     inability_reason = models.CharField(max_length=256, null=True, blank=True)
     representative_name = models.CharField(max_length=256, null=True, blank=True)
-    relationship_to_patient = models.CharField(max_length=32, null=True, blank=True)
+    relationship_to_patient = models.CharField(max_length=256)
 
     # deals with nurse's signature
     witness_name = models.ForeignKey(User, null=True, blank=True, on_delete=models.DO_NOTHING, related_name="witness")

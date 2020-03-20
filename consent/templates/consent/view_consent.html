@@ -8,10 +8,19 @@
 <div>
     <h3>Procedure: {{ consent.procedure }}</h3> 
     <h3>Diagnosis: {{ consent.diagnosis }}</h3> 
-    <h3>Risks/benefits: {{ consent.risk_ben_alt }}</h3> 
-    <h3>Anesthesia: {{ consent.anesthsia_type }}</h3>
+    <h3>Risks/benefits: {{ consent.risk_ben_alt }}</h3>
     {% if not consent.has_any_signature %}
     <a class="btn btn-primary" href="{% url 'edit_consent_form' consent.id %}" role="button">Edit This Form</a>
+    {% endif %}
+    <h3>Risks/benefits: {{ consent.risk_ben_alt }}</h3>
+    {% if consent.anesthesia_type == 1 %}
+        <h3>Anesthesia: General Anesthesia </h3>
+    {% elif consent.anesthesia_type == 2 %}
+        <h3>Anesthesia: Local Anesthesia </h3>
+    {% elif consent.anesthesia_type == 3 %}
+        <h3>Anesthesia: Sedation </h3>
+    {% elif consent.anesthesia_type == 4 %}
+        <h3>Anesthesia: No Anesthesia </h3>
     {% endif %}
 </div>
 <div>

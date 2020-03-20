@@ -5,7 +5,6 @@ from django.http import FileResponse
 from django.contrib.auth.decorators import login_required, permission_required
 from .models import Operation, PatientConsent
 from .forms import ConsentForm, OperationForm, SignatureForm
-from portal.decorators import institution_required
 
 
 @login_required
