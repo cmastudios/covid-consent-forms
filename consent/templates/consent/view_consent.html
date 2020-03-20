@@ -9,10 +9,6 @@
     <h3>Procedure: {{ consent.procedure }}</h3> 
     <h3>Diagnosis: {{ consent.diagnosis }}</h3> 
     <h3>Risks/benefits: {{ consent.risk_ben_alt }}</h3>
-    {% if not consent.has_any_signature %}
-    <a class="btn btn-primary" href="{% url 'edit_consent_form' consent.id %}" role="button">Edit This Form</a>
-    {% endif %}
-    <h3>Risks/benefits: {{ consent.risk_ben_alt }}</h3>
     {% if consent.anesthesia_type == 1 %}
         <h3>Anesthesia: General Anesthesia </h3>
     {% elif consent.anesthesia_type == 2 %}
@@ -22,18 +18,27 @@
     {% elif consent.anesthesia_type == 4 %}
         <h3>Anesthesia: No Anesthesia </h3>
     {% endif %}
+    {% if not consent.has_any_signature %}
+    <a class="btn btn-primary" href="{% url 'edit_consent_form' consent.id %}" role="button">Edit This Form</a>
+    {% endif %}
 </div>
 <div>
     <div class="page-header">
         <h2>Signatures</h2>
     </div>
     <div>
+        {% if consent.has_inability_reason %}
+        Patient was unable to consent. Reason: {{ consent.inability_reason }}.
+        {% elif consent.has_relative %}
+        <h3>Patient Representative</h3>
+        {% else %}
         <h3>Patient</h3>
+        {% endif %}
+
+
         {% if consent.has_patient_signature %}
 
-        {% if consent.has_inability_reason %}
-        Patient was unable to consent. Reason: {{ consent.inability_reason }}. Signed by physician.
-        {% elif consent.has_relative %}
+        {% if consent.has_relative %}
         Signed by {{ consent.representative_name }}. Relationship: {{ consent.relationship_to_patient }}.
         {% else %}
         Signed by patient.
@@ -45,7 +50,7 @@
         <video src="{% url 'view_signature_file' consent.id 'patient' %}" width="100%" height="500px" controls></video>
         {% endif %}
 
-        {% else %}
+        {% elif not consent.has_inability_reason %}
         <a class="btn btn-primary" href="{% url 'view_signature' consent.id 'patient' %}" role="button">Add Signature</a>
         {% endif %}
     </div>
