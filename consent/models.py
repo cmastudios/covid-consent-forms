@@ -54,7 +54,7 @@ class PatientConsent(models.Model):
     ability_to_consent = models.IntegerField(choices=ABLE_TO_CONSENT, default=1)
     inability_reason = models.CharField(max_length=256, null=True, blank=True)
     representative_name = models.CharField(max_length=256, null=True, blank=True)
-    relationship_to_patient = models.CharField(max_length=256, default="self")
+    relationship_to_patient = models.CharField(max_length=256, null=True, blank=True)
 
     # deals with nurse's signature
     witness_name = models.ForeignKey(User, null=True, blank=True, on_delete=models.DO_NOTHING, related_name="witness")

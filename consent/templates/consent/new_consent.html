@@ -13,15 +13,6 @@
         m = n.getMonth() + 1;
         d = n.getDate();
         document.getElementById("date").innerHTML = "Today's date: " + m + "/" + d + "/" + y;
-        if (document.getElementById("able_to_consent").value === 1) {
-            document.getElementById("unable").disabled = true;
-            document.getElementById("rep_name").disabled = true;
-            document.getElementById("rel_to_pat").disabled = false;
-        } else {
-            document.getElementById("reason").disabled = false;
-            document.getElementById("rep_name").disabled = false;
-            document.getElementById("rel_to_pat").disabled = false;
-        }
     </script>
     <div class="col-6" style="margin-bottom: 15px">
         {{ form.consent_type | as_crispy_field }}
@@ -56,7 +47,7 @@
     <div class="col-6" style="margin-top: 15px">
         {{ form.anesthesia_type | as_crispy_field }}
     </div>
-    <div class="col-6" style="margin-top: 15px">
+    <div class="col-6" style="margin-top: 15px" id="ability">
         {{ form.ability_to_consent | as_crispy_field }}
     </div>
     <div class="col-6" style="margin-top: 15px" id="reason">
@@ -65,7 +56,7 @@
     <div class="col-6" style="margin-top: 15px" id="rep_name">
         {{ form.representative_name | as_crispy_field }}
     </div>
-    <div class="col-6" style="margin-top: 15px" id="rel_to_pat">
+    <div class="col-6" style="margin-top: 15px" id="rel_to_patient">
         {{ form.relationship_to_patient | as_crispy_field }}
     </div>
 
