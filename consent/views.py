@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.contrib.auth.hashers import make_password, check_password
 from django.contrib.auth.models import User
 from django.db.models import Q
+from django.middleware.csrf import rotate_token
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import FileResponse
 from django.contrib.auth.decorators import login_required, permission_required
@@ -36,6 +37,8 @@ def new_form(request):
             password = User.objects.make_random_password(16)
             consent.password_hash = make_password(password)
             consent.save()
+            # prevent resubmission
+            rotate_token(request)
             return render(request, 'consent/new_consent_created.html', {'id': consent.id, 'password': password})
     else:
         form = ConsentForm()
