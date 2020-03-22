@@ -1,6 +1,21 @@
 {% extends 'consent/base.html' %} {% block title %}View Signature{% endblock %} {% block content %}
 
-<p>Form created. Its unique ID is {{ id }}. Its password is {{ password }}.</p>
-<p>It is available at {{ request.scheme }}://{{ request.get_host }}{% url 'view_consent_form' id %}</p>
+<h1>Consent Form Created!</h1>
+
+<h3>
+    <a
+       href={{ request.scheme }}://{{ request.get_host }}{% url 'view_consent_form' id %}>
+        {{ request.scheme }}://{{ request.get_host }}{% url 'view_consent_form' id %}</a>
+</h3>
+
+<h3>
+Password: {{ password }}
+</h3>
+
+<h4 style="margin-top: 25px;">
+This is the only time the password will be shown! Please chart the URL and password before navigating away from the this screen!
+</h4>
+
+<a style="padding: 15px 25px; margin-right:10px; margin-top: 75px" class="btn btn-primary" href="/" role="button">Home</a>
 
 {% endblock %}
