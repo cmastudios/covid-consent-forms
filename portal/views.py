@@ -36,7 +36,7 @@ def check_verification_token(username, token):
 
 def send_verification_email(request, username, email):
     m = create_verification_token(username)
-    link = f"{request.scheme}://{request.get_host()}{reverse('verification', token=m)}"
+    link = f"{request.scheme}://{request.get_host()}{reverse('verification', kwargs={'token': m})}"
     send_mail(
         "Verify your email",
         f"In order to access SLU Health Patient Consent Portal, you must verify your institutional affiliation. "
