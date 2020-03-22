@@ -1,13 +1,14 @@
 import mimetypes
 
-from django.contrib.auth.hashers import make_password
+from django.contrib import messages
+from django.contrib.auth.hashers import make_password, check_password
 from django.contrib.auth.models import User
 from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import FileResponse
 from django.contrib.auth.decorators import login_required, permission_required
 from .models import Operation, PatientConsent
-from .forms import ConsentForm, OperationForm, SignatureForm
+from .forms import ConsentForm, OperationForm, SignatureForm, ConsentFormAuthorization
 
 
 @login_required
@@ -41,12 +42,39 @@ def new_form(request):
     return render(request, 'consent/new_consent.html', {'form': form})
 
 
+def set_authorized_to_view_form(request, form_id):
+    if "consent.forms_authorized" in request.session:
+        request.session['consent.forms_authorized'][:] = form_id
+    else:
+        request.session['consent.forms_authorized'] = [form_id]
+
+
+def check_authorized_to_view_form(request, form_id):
+    if "consent.forms_authorized" in request.session:
+        return form_id in request.session['consent.forms_authorized']
+    else:
+        return False
+
+
 @login_required
 @permission_required("consent.view_patientconsent")
 def view_form(request, form_id):
     consent = get_object_or_404(PatientConsent, pk=form_id)
 
-    return render(request, 'consent/view_consent.html', {"consent": consent})
+    if request.method == 'POST':
+        form = ConsentFormAuthorization(request.POST, instance=consent)
+        if form.is_valid():
+            set_authorized_to_view_form(request, form_id)
+            return render(request, 'consent/view_consent.html', {"consent": consent})
+        else:
+            messages.error(request, "Password failed")
+            return render(request, 'consent/check_consent_auth.html', {"form": form})
+
+    elif check_authorized_to_view_form(request, form_id):
+        return render(request, 'consent/view_consent.html', {"consent": consent})
+    else:
+        form = ConsentFormAuthorization()
+        return render(request, 'consent/check_consent_auth.html', {"form": form})
 
 
 @login_required

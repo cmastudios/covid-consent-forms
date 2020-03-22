@@ -1,3 +1,6 @@
+from django import forms
+from django.contrib.auth.hashers import check_password
+from django.core.exceptions import ValidationError
 from django.forms import ModelForm, Form, FileField, TextInput
 
 from .models import PatientConsent, Operation
@@ -31,3 +34,20 @@ class OperationForm(ModelForm):
 
 class SignatureForm(Form):
     signature = FileField()
+
+
+class ConsentFormAuthorization(ModelForm):
+    password = forms.CharField(
+        label="Password to view form",
+        widget=forms.PasswordInput,
+        strip=False,
+    )
+
+    class Meta:
+        model = PatientConsent
+        fields = ()
+
+    def clean_password(self):
+        if not check_password(self.cleaned_data["password"], self.instance.password_hash):
+            raise ValidationError("Incorrect password")
+        return self.cleaned_data["password"]

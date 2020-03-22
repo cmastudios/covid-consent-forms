@@ -1,0 +1,13 @@
+{% extends 'consent/base.html' %} {% load bootstrap3 %}
+{% block title %}Sign{% endblock %} {% block content %}
+<p>Accessing this consent form requires entering a password.</p>
+<form method="post" enctype="multipart/form-data" class="input-group">
+    {% csrf_token %}
+    {% bootstrap_form form %}
+    {% buttons %}
+        <button type="submit" class="btn btn-primary">
+            Submit
+        </button>
+    {% endbuttons %}
+</form>
+{% endblock %}
