@@ -19,14 +19,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'y0hvi9944!(^4k4v-_g9#)av_3t0!sj*jaj*paa6z+l5jx_72y'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = ["[2600:6c40:500:ebfe::5]", "localhost", "dev1.innovationdx.com", "127.0.0.1"]
-
 
 # Application definition
 
@@ -77,30 +69,6 @@ WSGI_APPLICATION = 'covidconsent.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'OPTIONS': {
-#             'read_default_file': './my.cnf',
-#         },
-#     }
-# }
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': 'mydatabase',
-#     }
-# }
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'OPTIONS': {
-            'read_default_file': './my.cnf',
-        },
-    }
-}
 
 
 # Password validation
@@ -145,8 +113,3 @@ LOGIN_URL = '/portal/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/portal/login/'
 
-EMAIL_HOST = os.getenv('SMTP_HOST', 'localhost')
-EMAIL_PORT = int(os.getenv('SMTP_PORT', '587'))
-EMAIL_HOST_USER = os.getenv('SMTP_USERNAME', None)
-EMAIL_HOST_PASSWORD = os.getenv('SMTP_PASSWORD', None)
-EMAIL_USE_TLS = os.getenv('SMTP_TLS', 'false').lower() in ('true', 'yes', '1')
