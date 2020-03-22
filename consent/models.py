@@ -61,7 +61,7 @@ class PatientConsent(models.Model):
     witness_signature = models.FileField(upload_to="videos/", null=True, blank=True)
 
     today_date = models.DateTimeField(default=timezone.now)
-    password = models.UUIDField(default=uuid.uuid4, editable=False)
+    password_hash = models.CharField(max_length=128)
 
     def __str__(self):
         return f"{self.today_date} :: {self.patient_name}"

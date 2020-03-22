@@ -1,4 +1,7 @@
 import mimetypes
+
+from django.contrib.auth.hashers import make_password
+from django.contrib.auth.models import User
 from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import FileResponse
@@ -28,8 +31,11 @@ def new_form(request):
         form = ConsentForm(request.POST, request.FILES)
         if form.is_valid():
             # save new operation
-            consent = form.save()
-            return redirect("view_consent_form", form_id=consent.id)
+            consent = form.save(commit=False)
+            password = User.objects.make_random_password(16)
+            consent.password_hash = make_password(password)
+            consent.save()
+            return render(request, 'consent/new_consent_created.html', {'id': consent.id, 'password': password})
     else:
         form = ConsentForm()
     return render(request, 'consent/new_consent.html', {'form': form})

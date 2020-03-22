@@ -1,0 +1,6 @@
+{% extends 'consent/base.html' %} {% block title %}View Signature{% endblock %} {% block content %}
+
+<p>Form created. Its unique ID is {{ id }}. Its password is {{ password }}.</p>
+<p>It is available at {{ request.scheme }}://{{ request.get_host }}{% url 'view_consent_form' id %}</p>
+
+{% endblock %}
