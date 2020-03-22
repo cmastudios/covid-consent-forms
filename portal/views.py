@@ -10,6 +10,7 @@ from django.core.mail import send_mail
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import authenticate, login, logout
+from django.urls import reverse
 
 from portal.models import Institution, InstitutionNetwork, InstitutionEmail
 from .forms import InstitutionForm, CreateUserForm
@@ -33,9 +34,9 @@ def check_verification_token(username, token):
     return create_verification_token(username) == token
 
 
-def send_verification_email(username, email):
+def send_verification_email(request, username, email):
     m = create_verification_token(username)
-    link = f"https://coviddemo.innovationdx.com/portal/verify/{m}/"
+    link = f"{request.scheme}://{request.get_host()}{reverse('verification', token=m)}"
     send_mail(
         "Verify your email",
         f"In order to access SLU Health Patient Consent Portal, you must verify your institutional affiliation. "
@@ -43,7 +44,7 @@ def send_verification_email(username, email):
         f"{link}\n\n"
         f"Thanks for using SLU Health Patient Consent Portal.\n"
         f"Not expecting this email? Someone may have used your email address by mistake. Please disregard this message.",
-        "consentportal@innovationdx.com",
+        "Health Patient Consent Portal <consentportal@innovationdx.com>",
         [email],
         fail_silently=False,
     )
@@ -56,7 +57,7 @@ def signup_view(request):
             username = forms.cleaned_data.get('username')
             email = forms.cleaned_data.get('email')
             raw_password = forms.cleaned_data.get('password1')
-            send_verification_email(username, email)
+            send_verification_email(request, username, email)
             forms.save()
             user = authenticate(username=username, password=raw_password)
             login(request, user)
@@ -91,6 +92,8 @@ def verification_view(request, token):
         permission = Permission.objects.get(name='Can add patient consent')
         request.user.user_permissions.add(permission)
         permission = Permission.objects.get(name='Can view patient consent')
+        request.user.user_permissions.add(permission)
+        permission = Permission.objects.get(name='Can change patient consent')
         request.user.user_permissions.add(permission)
         messages.success(request, "Your account has been successfully verified.")
         return redirect('index')
