@@ -6,7 +6,9 @@
     </div>
     <div style="display: inline-block;">
         <a style="padding: 15px 25px; margin-right:10px;" class="btn btn-primary" href="/consent/patient_form/create/" role="button">Create a new consent</a>
+{% if perms.consent.add_operation %}
         <a style="padding: 15px 25px; margin-left:10px;" class="btn btn-primary" href="/consent/operation/create/" role="button">Create a new operation</a>
+{% endif %}
     </div>
 </div>
 
@@ -25,6 +27,8 @@
     <li class="list-group-item"><a href="/consent/patient_form/{{ form.id }}/">{{ form.today_date }} :: {{ form.patient_name }}</a></li>
 {% endfor %}
 </ul>
+
+{% if perms.consent.view_operation %}
 <div class="page-header">
     <h1>Registered Operations</h1>
 </div>
@@ -33,6 +37,7 @@
     <li class="list-group-item"><a href="/consent/operation/{{ op.id }}/">{{ op }}</a></li>
 {% endfor %}
 </ul>
+{% endif %}
 
 {% else %}
 
