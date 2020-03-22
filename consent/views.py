@@ -44,7 +44,7 @@ def new_form(request):
 
 def set_authorized_to_view_form(request, form_id):
     if "consent.forms_authorized" in request.session:
-        request.session['consent.forms_authorized'][:] = form_id
+        request.session['consent.forms_authorized'].append(form_id)
     else:
         request.session['consent.forms_authorized'] = [form_id]
 
