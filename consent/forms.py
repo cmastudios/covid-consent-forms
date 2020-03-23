@@ -21,6 +21,9 @@ class ConsentForm(ModelForm):
             "inability_reason": "Reason for Inability to Consent",
             "representative_name": "Patient Representative Name"
         }
+        widgets = {
+            'patient_dob': TextInput(attrs={'type': 'date'})
+        }
 
 
 class OperationForm(ModelForm):
