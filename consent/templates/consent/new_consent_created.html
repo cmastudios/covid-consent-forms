@@ -4,7 +4,7 @@
 
 <h3>
     <a
-       href={{ request.scheme }}://{{ request.get_host }}{% url 'view_consent_form' id %}>
+       href="{{ request.scheme }}://{{ request.get_host }}{% url 'view_consent_form' id %}">
         {{ request.scheme }}://{{ request.get_host }}{% url 'view_consent_form' id %}</a>
 </h3>
 
@@ -13,7 +13,7 @@ Password: {{ password }}
 </h3>
 
 <h4 style="margin-top: 25px;">
-This is the only time the password will be shown! Please chart the URL and password before navigating away from the this screen!
+Add this URL and password to the patient's medical chart.
 </h4>
 
 <a style="padding: 15px 25px; margin-right:10px; margin-top: 75px" class="btn btn-primary" href="/" role="button">Home</a>

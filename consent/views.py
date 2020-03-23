@@ -13,6 +13,21 @@ from .models import Operation, PatientConsent
 from .forms import ConsentForm, OperationForm, SignatureForm, ConsentFormAuthorization
 
 
+def set_authorized_to_view_form(request, form_id):
+    if "consent.forms_authorized" in request.session:
+        request.session['consent.forms_authorized'].append(form_id)
+    else:
+        request.session['consent.forms_authorized'] = [form_id]
+    request.session.modified = True
+
+
+def check_authorized_to_view_form(request, form_id):
+    if "consent.forms_authorized" in request.session:
+        return form_id in request.session['consent.forms_authorized']
+    else:
+        return False
+
+
 @login_required
 def landing(request):
     operations = Operation.objects.all()
@@ -35,6 +50,7 @@ def new_form(request):
             consent.creator = request.user
             consent.password_hash = make_password(password)
             consent.save()
+            set_authorized_to_view_form(request, consent.id)
             # prevent resubmission
             rotate_token(request)
             response = render(request, 'consent/new_consent_created.html', {'id': consent.id, 'password': password})
@@ -46,38 +62,35 @@ def new_form(request):
     return render(request, 'consent/new_consent.html', {'form': form})
 
 
-def set_authorized_to_view_form(request, form_id):
-    if "consent.forms_authorized" in request.session:
-        request.session['consent.forms_authorized'].append(form_id)
-    else:
-        request.session['consent.forms_authorized'] = [form_id]
-    request.session.modified = True
-
-
-def check_authorized_to_view_form(request, form_id):
-    if "consent.forms_authorized" in request.session:
-        return form_id in request.session['consent.forms_authorized']
-    else:
-        return False
-
-
 def view_form(request, form_id):
     consent = get_object_or_404(PatientConsent, pk=form_id)
 
+    def display_prompt():
+        return render(request, 'consent/check_consent_auth.html', {"form": form})
+
+    def display_form():
+        password = request.COOKIES.get(f"consent_id_{consent.id}_password")
+        return render(request, 'consent/view_consent.html', {"consent": consent, "password": password})
+
     if request.method == 'POST':
+        # user is trying to submit password
         form = ConsentFormAuthorization(request.POST, instance=consent)
         if form.is_valid():
+            # correct password
             set_authorized_to_view_form(request, form_id)
-            password = request.COOKIES.get(f"consent_id_{consent.id}_password")
-            return render(request, 'consent/view_consent.html', {"consent": consent, "password": password})
+            return display_form()
         else:
-            return render(request, 'consent/check_consent_auth.html', {"form": form})
+            # incorrect password
+            return display_prompt()
 
     elif check_authorized_to_view_form(request, form_id):
-        return render(request, 'consent/view_consent.html', {"consent": consent})
+        # user has already successfully entered password
+        return display_form()
+
     else:
+        # user is not yet authorized
         form = ConsentFormAuthorization()
-        return render(request, 'consent/check_consent_auth.html', {"form": form})
+        return display_prompt()
 
 
 @login_required

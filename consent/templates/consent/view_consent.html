@@ -6,7 +6,7 @@
     <p>Form date: {{ consent.today_date }} ({{ TIME_ZONE }})</p>
     <P>{{ request.build_absolute_uri }}</P>
     {% if password %}
-        <p>Password: {{ password }} </p>
+        <p>Password: {{ password }} (stored on your device, will disappear in 48 hours, please chart)</p>
     {% endif %}
 </div>
 <div>
