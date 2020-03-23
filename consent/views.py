@@ -1,12 +1,9 @@
-import mimetypes
-
 from django.contrib import messages
-from django.contrib.auth.hashers import make_password, check_password
+from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User
 from django.db.models import Q
 from django.middleware.csrf import rotate_token
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import FileResponse
 from django.contrib.auth.decorators import login_required, permission_required
 from .models import Operation, PatientConsent
 from .forms import ConsentForm, OperationForm, SignatureForm, ConsentFormAuthorization
@@ -39,7 +36,10 @@ def new_form(request):
             consent.save()
             # prevent resubmission
             rotate_token(request)
-            return render(request, 'consent/new_consent_created.html', {'id': consent.id, 'password': password})
+            response = render(request, 'consent/new_consent_created.html', {'id': consent.id, 'password': password})
+            # 172800 seconds = 48.0 hours
+            response.set_cookie(key=f"consent_id_{consent.id}_password", value=password, max_age=172800)
+            return response
     else:
         form = ConsentForm()
     return render(request, 'consent/new_consent.html', {'form': form})
@@ -68,7 +68,9 @@ def view_form(request, form_id):
         form = ConsentFormAuthorization(request.POST, instance=consent)
         if form.is_valid():
             set_authorized_to_view_form(request, form_id)
-            return render(request, 'consent/view_consent.html', {"consent": consent})
+            password = request.COOKIES.get(f"consent_id_{consent.id}_password")
+            print(password)
+            return render(request, 'consent/view_consent.html', {"consent": consent, "password": password})
         else:
             messages.error(request, "Password failed")
             return render(request, 'consent/check_consent_auth.html', {"form": form})

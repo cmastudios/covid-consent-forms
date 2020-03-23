@@ -5,6 +5,9 @@
     <h1>Patient: {{ consent.patient_name }} (DOB {{ consent.patient_dob}}) #{{ consent.patient_mrn }}</h1>
     <p>Form date: {{ consent.today_date }} ({{ TIME_ZONE }})</p>
     <P>{{ request.build_absolute_uri }}</P>
+    {% if password != 1 %}
+        <p>Password: {{ password }} </p>
+    {% endif %}
 </div>
 <div>
     <h3>Procedure: {{ consent.procedure }}</h3> 
