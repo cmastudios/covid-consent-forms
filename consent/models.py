@@ -49,6 +49,7 @@ class Operation(models.Model):
 
 
 class PatientConsent(models.Model):
+    creator = models.ForeignKey(User, null=True, on_delete=models.DO_NOTHING)
     consent_type = models.ForeignKey(Operation, on_delete=models.DO_NOTHING)
 
     patient_name = models.CharField(max_length=256)
@@ -56,8 +57,8 @@ class PatientConsent(models.Model):
     patient_mrn = models.CharField("Patient MRN", max_length=64)
 
     # deals with physician's signature
-    attending_physician = models.ForeignKey(User, null=True, blank=True, on_delete=models.DO_NOTHING, related_name="attending_physician")
-    consenting_physician = models.ForeignKey(User, null=True, blank=True, on_delete=models.DO_NOTHING, related_name="consenting_physician")
+    attending_physician = models.CharField("Name of attending physician", max_length=100, null=True, blank=True)
+    consenting_physician = models.CharField("Name of physician obtaining consent", max_length=100, null=True, blank=True)
     physician_signature = models.FileField(upload_to=get_patient_consent_file_path, null=True, blank=True)
 
     procedure = models.CharField(max_length=512)
@@ -73,7 +74,7 @@ class PatientConsent(models.Model):
     relationship_to_patient = models.CharField(max_length=256, null=True, blank=True)
 
     # deals with nurse's signature
-    witness_name = models.ForeignKey(User, null=True, blank=True, on_delete=models.DO_NOTHING, related_name="witness")
+    witness_name = models.CharField("Name of witness", max_length=100, null=True, blank=True)
     witness_signature = models.FileField(upload_to=get_patient_consent_file_path, null=True, blank=True)
 
     today_date = models.DateTimeField(default=timezone.now)

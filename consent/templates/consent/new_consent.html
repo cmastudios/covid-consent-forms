@@ -3,6 +3,7 @@
 {% load crispy_forms_tags %}
 
 {% block title %}New Consent{% endblock %} {% block content %}
+<p>Leave fields blank if not applicable.</p>
 <form method="post" enctype="multipart/form-data" class="input-group">
     {% csrf_token %}
     <p id="date"></p>
@@ -50,7 +51,7 @@
     <div class="col-6 consent-form-field" id="ability">
         {{ form.ability_to_consent | as_crispy_field }}
     </div>
-    <div id="unable_to_consent_section">
+    <div id="unable_to_consent_section" {% if form.ability_to_consent.initial == 1 %}style="display: none"{% endif %}>
         <div class="col-6 consent-form-field" id="reason">
             {{ form.inability_reason | as_crispy_field }}
         </div>

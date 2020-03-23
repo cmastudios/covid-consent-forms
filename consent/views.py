@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from django.contrib import messages
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User
@@ -5,6 +7,8 @@ from django.db.models import Q
 from django.middleware.csrf import rotate_token
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required, permission_required
+from django.utils import timezone
+
 from .models import Operation, PatientConsent
 from .forms import ConsentForm, OperationForm, SignatureForm, ConsentFormAuthorization
 
@@ -12,14 +16,10 @@ from .forms import ConsentForm, OperationForm, SignatureForm, ConsentFormAuthori
 @login_required
 def landing(request):
     operations = Operation.objects.all()
-    is_phy = Q(consenting_physician=request.user)
-    is_wit = Q(witness_name=request.user)
-    phy_unsigned = Q(physician_signature__isnull=True) | Q(physician_signature__exact='')
-    wit_unsigned = Q(witness_signature__isnull=True) | Q(witness_signature__exact='')
-    waiting = PatientConsent.objects.filter((is_phy & phy_unsigned) | (is_wit & wit_unsigned))
-    signed = PatientConsent.objects.filter((is_phy & ~phy_unsigned) | (is_wit & ~wit_unsigned))
+    last_48h = timezone.now() - timedelta(hours=48)
+    consent_forms = PatientConsent.objects.filter(creator=request.user, today_date__gte=last_48h)
     return render(request, "consent/landing_signedin.html", {
-        "operations": operations, "waiting": waiting, "signed": signed
+        "operations": operations, "consent_forms": consent_forms
     })
 
 
@@ -32,6 +32,7 @@ def new_form(request):
             # save new operation
             consent = form.save(commit=False)
             password = User.objects.make_random_password(16)
+            consent.creator = request.user
             consent.password_hash = make_password(password)
             consent.save()
             # prevent resubmission
@@ -41,7 +42,7 @@ def new_form(request):
             response.set_cookie(key=f"consent_id_{consent.id}_password", value=password, max_age=172800)
             return response
     else:
-        form = ConsentForm()
+        form = ConsentForm(initial={'consenting_physician': f'{request.user.first_name} {request.user.last_name}'})
     return render(request, 'consent/new_consent.html', {'form': form})
 
 
@@ -50,6 +51,7 @@ def set_authorized_to_view_form(request, form_id):
         request.session['consent.forms_authorized'].append(form_id)
     else:
         request.session['consent.forms_authorized'] = [form_id]
+    request.session.modified = True
 
 
 def check_authorized_to_view_form(request, form_id):
@@ -59,8 +61,6 @@ def check_authorized_to_view_form(request, form_id):
         return False
 
 
-@login_required
-@permission_required("consent.view_patientconsent")
 def view_form(request, form_id):
     consent = get_object_or_404(PatientConsent, pk=form_id)
 
@@ -69,10 +69,8 @@ def view_form(request, form_id):
         if form.is_valid():
             set_authorized_to_view_form(request, form_id)
             password = request.COOKIES.get(f"consent_id_{consent.id}_password")
-            print(password)
             return render(request, 'consent/view_consent.html', {"consent": consent, "password": password})
         else:
-            messages.error(request, "Password failed")
             return render(request, 'consent/check_consent_auth.html', {"form": form})
 
     elif check_authorized_to_view_form(request, form_id):
@@ -100,8 +98,6 @@ def edit_form(request, form_id):
     return render(request, 'consent/new_consent.html', {'form': form})
 
 
-@login_required
-@permission_required("consent.view_patientconsent")
 def view_signature(request, form_id, signature_type):
     consent = get_object_or_404(PatientConsent, pk=form_id)
     if signature_type == "patient":

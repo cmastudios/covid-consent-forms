@@ -13,7 +13,6 @@ function enable()
 
 window.addEventListener('load', (event) =>
 {
-    disable();
     document.getElementById("id_ability_to_consent").addEventListener('change', () =>
     {
         if (document.getElementById('id_ability_to_consent').value == 1)

@@ -5,11 +5,12 @@
     <h1>Patient: {{ consent.patient_name }} (DOB {{ consent.patient_dob}}) #{{ consent.patient_mrn }}</h1>
     <p>Form date: {{ consent.today_date }} ({{ TIME_ZONE }})</p>
     <P>{{ request.build_absolute_uri }}</P>
-    {% if password != 1 %}
+    {% if password %}
         <p>Password: {{ password }} </p>
     {% endif %}
 </div>
 <div>
+    <h3>Attending Physician: {{ consent.attending_physician }}</h3>
     <h3>Procedure: {{ consent.procedure }}</h3> 
     <h3>Diagnosis: {{ consent.diagnosis }}</h3> 
     <h3>Risks/benefits: {{ consent.risk_ben_alt }}</h3>
@@ -31,11 +32,7 @@
         <h2>Signatures</h2>
     </div>
 
-    {% if consent.has_inability_reason %}
-    <div class="alert alert-info" role="alert">
-        Patient was unable to consent. Reason: {{ consent.inability_reason }}.
-    </div>
-    {% elif consent.has_relative %}
+    {% if consent.has_relative %}
     {% if consent.has_patient_signature %}
     <div class="alert alert-success" role="alert">
         Successfully signed by {{ consent.representative_name }} ({{ consent.relationship_to_patient }}).
@@ -47,6 +44,10 @@
         <a class="alert-link" href="{% url 'view_signature' consent.id 'patient' %}" role="button">Add Signature</a>
     </div>
     {% endif %}
+    {% elif consent.has_inability_reason %}
+    <div class="alert alert-info" role="alert">
+        Patient was unable to consent. Reason: {{ consent.inability_reason }}.
+    </div>
     {% else %}
     {% if consent.has_patient_signature %}
     <div class="alert alert-success" role="alert">
@@ -63,24 +64,24 @@
     
     {% if consent.has_physician_signature %}
     <div class="alert alert-success" role="alert">
-        Successfully signed by physician: {{ consent.consenting_physician.first_name }} {{ consent.consenting_physician.last_name }}.
+        Successfully signed by physician: {{ consent.consenting_physician }}.
         <a class="alert-link" href="{{ MEDIA_URL }}{{ consent.physician_signature }}">View attached signature</a>.
     </div>
     {% else %}
     <div class="alert alert-danger" role="alert">
-        Awaiting signature from consenting physician: {{ consent.consenting_physician.first_name }} {{ consent.consenting_physician.last_name }}.
+        Awaiting signature from consenting physician: {{ consent.consenting_physician}}.
         <a class="alert-link" href="{% url 'view_signature' consent.id 'physician' %}" role="button">Add Signature</a>
     </div>
     {% endif %}
 
     {% if consent.has_witness_signature %}
     <div class="alert alert-success" role="alert">
-        Successfully signed by witness: {{ consent.consenting_witness.first_name }} {{ consent.consenting_witness.last_name }}.
+        Successfully signed by witness: {{ consent.witness_name }}.
         <a class="alert-link" href="{{ MEDIA_URL }}{{ consent.witness_signature }}">View attached signature</a>.
     </div>
     {% else %}
     <div class="alert alert-danger" role="alert">
-        Awaiting signature from witness: {{ consent.consenting_witness.first_name }} {{ consent.consenting_witness.last_name }}.
+        Awaiting signature from witness: {{ consent.witness_name }}.
         <a class="alert-link" href="{% url 'view_signature' consent.id 'witness' %}" role="button">Add Signature</a>
     </div>
     {% endif %}
