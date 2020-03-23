@@ -50,20 +50,22 @@
     <div class="col-6 consent-form-field" id="ability">
         {{ form.ability_to_consent | as_crispy_field }}
     </div>
-    <div class="col-6 consent-form-field" id="reason">
-        {{ form.inability_reason | as_crispy_field }}
-    </div>
-    <div class="col-6 consent-form-field" id="rep_name">
-        {{ form.representative_name | as_crispy_field }}
-    </div>
-    <div class="col-6 consent-form-field" id="rel_to_patient">
-        {{ form.relationship_to_patient | as_crispy_field }}
+    <div id="unable_to_consent_section">
+        <div class="col-6 consent-form-field" id="reason">
+            {{ form.inability_reason | as_crispy_field }}
+        </div>
+        <div class="col-6 consent-form-field" id="rep_name">
+            {{ form.representative_name | as_crispy_field }}
+        </div>
+        <div class="col-6 consent-form-field" id="rel_to_patient">
+            {{ form.relationship_to_patient | as_crispy_field }}
+        </div>
     </div>
 
     {% buttons %}
-        <button type="submit" class="btn btn-primary">
-            {% bootstrap_icon "star" %} Submit
-        </button>
+    <button type="submit" class="btn btn-primary">
+        Create Form
+    </button>
     {% endbuttons %}
 </form>
 {% endblock %}
