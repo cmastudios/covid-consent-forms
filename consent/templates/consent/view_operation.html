@@ -1,11 +1,11 @@
 {% extends 'consent/base.html' %} {% block title %}View Operation{% endblock %} {% block content %}
-
+{% load static %}
 <div class="page-header">
     <h1>Template: {{ operation.name }}</h1>
 </div>
 
 <div style="margin: 25px">
-    <a href="{% url 'view_operation_template' operation.id %}">View Consent Form Template</a>
+    <a href="{{ MEDIA_URL }}{{ operation.consent_form }}">View Consent Form Template</a>
 </div>
 
 <div style="margin: 100px 25px 25px;">

@@ -1,9 +1,12 @@
 import mimetypes
+import os
 import uuid
 
 from django.contrib.auth.models import User
 from django.db import models
+from django.urls import reverse
 from django.utils import timezone
+from django.conf import settings
 
 CONSENT_STATUS = (
     (1, "Consent given by patient"),
@@ -24,25 +27,38 @@ ABLE_TO_CONSENT = {
 }
 
 
+def get_form_type_file_path(instance, filename):
+    ext = filename.split('.')[-1]
+    return os.path.join('forms', f'{uuid.uuid4()}.{ext}')
+
+
+def get_patient_consent_file_path(instance, filename):
+    ext = filename.split('.')[-1]
+    return os.path.join('signatures', f'{uuid.uuid4()}.{ext}')
+
+
 class Operation(models.Model):
-    consent_form = models.FileField(upload_to="forms/")
+    consent_form = models.FileField(upload_to=get_form_type_file_path)
     name = models.CharField(max_length=256)
 
     def __str__(self):
         return self.name
+
+    def get_absolute_url(self):
+        return reverse('view_operation', kwargs={'operation_id': self.id})
 
 
 class PatientConsent(models.Model):
     consent_type = models.ForeignKey(Operation, on_delete=models.DO_NOTHING)
 
     patient_name = models.CharField(max_length=256)
-    patient_dob = models.DateField()
-    patient_mrn = models.CharField(max_length=64)
+    patient_dob = models.DateField("Patient Date of Birth")
+    patient_mrn = models.CharField("Patient MRN", max_length=64)
 
     # deals with physician's signature
     attending_physician = models.ForeignKey(User, null=True, blank=True, on_delete=models.DO_NOTHING, related_name="attending_physician")
     consenting_physician = models.ForeignKey(User, null=True, blank=True, on_delete=models.DO_NOTHING, related_name="consenting_physician")
-    physician_signature = models.FileField(upload_to="videos/", null=True, blank=True)
+    physician_signature = models.FileField(upload_to=get_patient_consent_file_path, null=True, blank=True)
 
     procedure = models.CharField(max_length=512)
     diagnosis = models.CharField(max_length=256)
@@ -50,7 +66,7 @@ class PatientConsent(models.Model):
     anesthesia_type = models.IntegerField(choices=ANESTHESIA_TYPE, default=4)
 
     # deals with patient's (or other)'s signature
-    patient_signature = models.FileField(upload_to="videos/", null=True, blank=True)
+    patient_signature = models.FileField(upload_to=get_patient_consent_file_path, null=True, blank=True)
     ability_to_consent = models.IntegerField(choices=ABLE_TO_CONSENT, default=1)
     inability_reason = models.CharField(max_length=256, null=True, blank=True)
     representative_name = models.CharField(max_length=256, null=True, blank=True)
@@ -58,13 +74,16 @@ class PatientConsent(models.Model):
 
     # deals with nurse's signature
     witness_name = models.ForeignKey(User, null=True, blank=True, on_delete=models.DO_NOTHING, related_name="witness")
-    witness_signature = models.FileField(upload_to="videos/", null=True, blank=True)
+    witness_signature = models.FileField(upload_to=get_patient_consent_file_path, null=True, blank=True)
 
     today_date = models.DateTimeField(default=timezone.now)
     password_hash = models.CharField(max_length=128)
 
     def __str__(self):
         return f"{self.today_date} :: {self.patient_name}"
+
+    def get_absolute_url(self):
+        return reverse('view_consent_form', kwargs={'form_id': self.id})
 
     @property
     def has_patient_signature(self):

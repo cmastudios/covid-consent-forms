@@ -137,22 +137,6 @@ def view_signature(request, form_id, signature_type):
 
 
 @login_required
-@permission_required("consent.view_patientconsent")
-def view_signature_file(request, form_id, signature_type):
-    consent = get_object_or_404(PatientConsent, pk=form_id)
-    if signature_type == "patient":
-        signature = consent.patient_signature
-    elif signature_type == "physician":
-        signature = consent.physician_signature
-    elif signature_type == "witness":
-        signature = consent.witness_signature
-    else:
-        raise Exception("Invalid signature type")
-
-    return FileResponse(open(signature.path, "rb"))
-
-
-@login_required
 @permission_required("consent.add_operation")
 def new_operation(request):
     if request.method == 'POST':
@@ -172,14 +156,6 @@ def new_operation(request):
 def view_operation(request, operation_id):
     operation = get_object_or_404(Operation, pk=operation_id)
     return render(request, "consent/view_operation.html", {"operation": operation})
-
-
-@login_required
-@permission_required("consent.view_operation")
-def view_operation_template(request, operation_id):
-    operation = get_object_or_404(Operation, pk=operation_id)
-    path = operation.consent_form.path
-    return FileResponse(open(path, "rb"))
 
 
 @login_required

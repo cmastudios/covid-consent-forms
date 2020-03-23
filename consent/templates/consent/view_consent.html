@@ -46,9 +46,9 @@
         {% endif %}
 
         {% if 'image' in consent.patient_signature_file_mime %}
-        <img src="{% url 'view_signature_file' consent.id 'patient' %}" width="100%" height="500px">
+        <img src="{{ MEDIA_URL }}{{ consent.patient_signature }}" width="100%" height="500px">
         {% elif 'video' in consent.patient_signature_file_mime %}
-        <video src="{% url 'view_signature_file' consent.id 'patient' %}" width="100%" height="500px" controls></video>
+        <video src="{{ MEDIA_URL }}{{ consent.patient_signature }}" width="100%" height="500px" controls></video>
         {% endif %}
 
         {% elif not consent.has_inability_reason %}
@@ -61,9 +61,9 @@
         Signed by {{ consent.consenting_physician.first_name }} {{ consent.consenting_physician.last_name }}.
 
         {% if 'image' in consent.physician_signature_file_mime %}
-        <img src="{% url 'view_signature_file' consent.id 'physician' %}" width="100%" height="500px">
+        <img src="{{ MEDIA_URL }}{{ consent.physician_signature }}" width="100%" height="500px">
         {% elif 'video' in consent.physician_signature_file_mime %}
-        <video src="{% url 'view_signature_file' consent.id 'physician' %}" width="100%" height="500px" controls></video>
+        <video src="{{ MEDIA_URL }}{{ consent.physician_signature }}" width="100%" height="500px" controls></video>
         {% endif %}
 
         {% else %}
@@ -76,9 +76,9 @@
         Signed by {{ consent.witness_name.first_name }} {{ consent.witness_name.last_name }}.
 
         {% if 'image' in consent.witness_signature_file_mime %}
-        <img src="{% url 'view_signature_file' consent.id 'witness' %}" width="100%" height="500px">
+        <img src="{{ MEDIA_URL }}{{ consent.witness_signature }}" width="100%" height="500px">
         {% elif 'video' in consent.witness_signature_file_mime %}
-        <video src="{% url 'view_signature_file' consent.id 'witness' %}" width="100%" height="500px" controls></video>
+        <video src="{{ MEDIA_URL }}{{ consent.witness_signature }}" width="100%" height="500px" controls></video>
         {% endif %}
 
         {% else %}
