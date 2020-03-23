@@ -14,54 +14,54 @@
         d = n.getDate();
         document.getElementById("date").innerHTML = "Today's date: " + m + "/" + d + "/" + y;
     </script>
-    <div class="col-6" style="margin-bottom: 15px">
+    <div class="col-6 consent-form-field">
         {{ form.consent_type | as_crispy_field }}
     </div>
-    <div class="col-6" style="margin-top: 15px">
+    <div class="col-6 consent-form-field">
         {{ form.patient_name | as_crispy_field }}
     </div>
-    <div class="col-6" style="margin-top: 15px">
+    <div class="col-6 consent-form-field">
         {{ form.patient_dob | as_crispy_field }}
     </div>
-    <div class="col-6" style="margin-top: 15px">
+    <div class="col-6 consent-form-field">
         {{ form.patient_mrn | as_crispy_field }}
     </div>
-    <div class="col-6" style="margin-top: 15px">
+    <div class="col-6 consent-form-field">
         {{ form.attending_physician | as_crispy_field }}
     </div>
-    <div class="col-6" style="margin-top: 15px">
+    <div class="col-6 consent-form-field">
         {{ form.consenting_physician | as_crispy_field }}
     </div>
-    <div class="col-6" style="margin-top: 15px">
+    <div class="col-6 consent-form-field">
         {{ form.witness_name | as_crispy_field }}
     </div>
-    <div class="col-6" style="margin-top: 15px">
+    <div class="col-6 consent-form-field">
         {{ form.procedure | as_crispy_field }}
     </div>
-    <div class="col-6" style="margin-top: 15px">
+    <div class="col-6 consent-form-field">
         {{ form.diagnosis | as_crispy_field }}
     </div>
-    <div class="col-6" style="margin-top: 15px">
+    <div class="col-6 consent-form-field">
         {{ form.risk_ben_alt | as_crispy_field }}
     </div>
-    <div class="col-6" style="margin-top: 15px">
+    <div class="col-6 consent-form-field">
         {{ form.anesthesia_type | as_crispy_field }}
     </div>
-    <div class="col-6" style="margin-top: 15px" id="ability">
+    <div class="col-6 consent-form-field" id="ability">
         {{ form.ability_to_consent | as_crispy_field }}
     </div>
-    <div class="col-6" style="margin-top: 15px" id="reason">
+    <div class="col-6 consent-form-field" id="reason">
         {{ form.inability_reason | as_crispy_field }}
     </div>
-    <div class="col-6" style="margin-top: 15px" id="rep_name">
+    <div class="col-6 consent-form-field" id="rep_name">
         {{ form.representative_name | as_crispy_field }}
     </div>
-    <div class="col-6" style="margin-top: 15px" id="rel_to_patient">
+    <div class="col-6 consent-form-field" id="rel_to_patient">
         {{ form.relationship_to_patient | as_crispy_field }}
     </div>
 
     {% buttons %}
-        <button type="submit" class="btn btn-primary" style="margin-top: 15px">
+        <button type="submit" class="btn btn-primary">
             {% bootstrap_icon "star" %} Submit
         </button>
     {% endbuttons %}

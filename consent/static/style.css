@@ -1,3 +1,8 @@
 .asteriskField {
     display: none !important;
 }
+
+.consent-form-field {
+    padding-top: 1em;
+    padding-bottom: 1em;
+}
