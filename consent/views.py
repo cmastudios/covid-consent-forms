@@ -132,10 +132,8 @@ def view_signature(request, form_id, signature_type):
                     consent.patient_signature = request.FILES['signature']
                 elif signature_type == "physician":
                     consent.physician_signature = request.FILES['signature']
-                    consent.consenting_physician = request.user
                 elif signature_type == "witness":
                     consent.witness_signature = request.FILES['signature']
-                    consent.witness_name = request.user
                 consent.save()
                 return redirect("view_consent_form", form_id=form_id)
         else:
