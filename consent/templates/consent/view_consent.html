@@ -24,7 +24,7 @@
         <h3>Anesthesia: No Anesthesia </h3>
     {% endif %}
     {% if not consent.has_any_signature %}
-    <a class="btn btn-primary" href="{% url 'edit_consent_form' consent.id %}" role="button">Edit This Form</a>
+    <a class="btn btn-primary" href="{% url 'edit_consent_form' inst_id consent.id %}" role="button">Edit This Form</a>
     {% endif %}
 </div>
 <div>
@@ -41,7 +41,7 @@
     {% else %}
     <div class="alert alert-danger" role="alert">
         Awaiting signature on patient's behalf from {{ consent.representative_name }} ({{ consent.relationship_to_patient }}).
-        <a class="alert-link" href="{% url 'view_signature' consent.id 'patient' %}" role="button">Add Signature</a>
+        <a class="alert-link" href="{% url 'view_signature' inst_id consent.id 'patient' %}" role="button">Add Signature</a>
     </div>
     {% endif %}
     {% elif consent.has_inability_reason %}
@@ -57,7 +57,7 @@
     {% else %}
     <div class="alert alert-danger" role="alert">
         Awaiting signature from patient.
-        <a class="alert-link" href="{% url 'view_signature' consent.id 'patient' %}" role="button">Add Signature</a>
+        <a class="alert-link" href="{% url 'view_signature' inst_id consent.id 'patient' %}" role="button">Add Signature</a>
     </div>
     {% endif %}
     {% endif %}
@@ -70,7 +70,7 @@
     {% else %}
     <div class="alert alert-danger" role="alert">
         Awaiting signature from consenting physician: {{ consent.consenting_physician}}.
-        <a class="alert-link" href="{% url 'view_signature' consent.id 'physician' %}" role="button">Add Signature</a>
+        <a class="alert-link" href="{% url 'view_signature' inst_id consent.id 'physician' %}" role="button">Add Signature</a>
     </div>
     {% endif %}
 
@@ -82,7 +82,7 @@
     {% else %}
     <div class="alert alert-danger" role="alert">
         Awaiting signature from witness: {{ consent.witness_name }}.
-        <a class="alert-link" href="{% url 'view_signature' consent.id 'witness' %}" role="button">Add Signature</a>
+        <a class="alert-link" href="{% url 'view_signature' inst_id consent.id 'witness' %}" role="button">Add Signature</a>
     </div>
     {% endif %}
 

@@ -1,3 +1,5 @@
+import mimetypes
+
 from django import forms
 from django.contrib.auth.hashers import check_password
 from django.core.exceptions import ValidationError
@@ -37,6 +39,11 @@ class OperationForm(ModelForm):
 
 class SignatureForm(Form):
     signature = FileField()
+
+    def clean(self):
+        if "image" not in mimetypes.guess_type(str(self.cleaned_data["signature"]))[0] and "video" not in mimetypes.guess_type(str(self.cleaned_data["signature"]))[0]:
+            raise forms.ValidationError('Only images and videos allowed!')
+        return self.cleaned_data["signature"]
 
 
 class ConsentFormAuthorization(ModelForm):

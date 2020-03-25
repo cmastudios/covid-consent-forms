@@ -5,9 +5,11 @@
         <h1>Create a new form</h1>
     </div>
     <div style="display: inline-block;">
-        <a style="padding: 15px 25px; margin-right:10px;" class="btn btn-primary" href="/consent/patient_form/create/" role="button">Create a new consent</a>
+        <a style="padding: 15px 25px; margin-right:10px;" class="btn btn-primary"
+        href="{% url 'new_consent_form' institution.identifier %}" role="button">Create a new consent</a>
 {% if perms.consent.add_operation %}
-        <a style="padding: 15px 25px; margin-left:10px;" class="btn btn-primary" href="/consent/operation/create/" role="button">Create a new operation</a>
+        <a style="padding: 15px 25px; margin-left:10px;" class="btn btn-primary"
+        href="{% url 'new_operation' %}" role="button">Create a new operation</a>
 {% endif %}
     </div>
 </div>
@@ -17,7 +19,8 @@
 </div>
 <ul class="list-group">
 {% for form in consent_forms %}
-    <li class="list-group-item"><a href="/consent/patient_form/{{ form.id }}/">{{ form.today_date }} :: {{ form.patient_name }}</a></li>
+    <li class="list-group-item"><a href="{% url 'view_consent_form' institution.identifier form.id %}">
+    {{ form.today_date }} :: {{ form.patient_name }}</a></li>
 {% endfor %}
 </ul>
 
@@ -27,7 +30,7 @@
 </div>
 <ul class="list-group">
 {% for op in operations %}
-    <li class="list-group-item"><a href="/consent/operation/{{ op.id }}/">{{ op }}</a></li>
+    <li class="list-group-item"><a href="{% url 'view_operation' op.id %}">{{ op }}</a></li>
 {% endfor %}
 </ul>
 {% endif %}

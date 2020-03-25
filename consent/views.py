@@ -12,6 +12,8 @@ from django.utils import timezone
 from .models import Operation, PatientConsent
 from .forms import ConsentForm, OperationForm, SignatureForm, ConsentFormAuthorization
 
+from portal.models import Institution, InstitutionEmail
+
 
 def set_authorized_to_view_form(request, form_id):
     if "consent.forms_authorized" in request.session:
@@ -28,32 +30,43 @@ def check_authorized_to_view_form(request, form_id):
         return False
 
 
+def get_user_institution(request):
+    email = request.user.email
+    for iemail in InstitutionEmail.objects.all():
+        if email.endswith(iemail.email_suffix):
+            return iemail.institution
+    return None
+
+
 @login_required
 def landing(request):
     operations = Operation.objects.all()
     last_48h = timezone.now() - timedelta(hours=48)
     consent_forms = PatientConsent.objects.filter(creator=request.user, today_date__gte=last_48h)
+    user_institution = get_user_institution(request)
     return render(request, "consent/landing_signedin.html", {
-        "operations": operations, "consent_forms": consent_forms
+        "operations": operations, "consent_forms": consent_forms, "institution": user_institution
     })
 
 
 @login_required
 @permission_required("consent.add_patientconsent")
-def new_form(request):
+def new_form(request, inst_id):
+    institution = get_object_or_404(Institution, identifier=inst_id)
     if request.method == 'POST':
         form = ConsentForm(request.POST, request.FILES)
         if form.is_valid():
             # save new operation
             consent = form.save(commit=False)
             password = User.objects.make_random_password(16)
+            consent.institution = institution
             consent.creator = request.user
             consent.password_hash = make_password(password)
             consent.save()
             set_authorized_to_view_form(request, consent.id)
             # prevent resubmission
             rotate_token(request)
-            response = render(request, 'consent/new_consent_created.html', {'id': consent.id, 'password': password})
+            response = render(request, 'consent/new_consent_created.html', {'id': consent.id, 'password': password, 'inst_id': inst_id})
             # 172800 seconds = 48.0 hours
             response.set_cookie(key=f"consent_id_{consent.id}_password", value=password, max_age=172800)
             return response
@@ -62,7 +75,7 @@ def new_form(request):
     return render(request, 'consent/new_consent.html', {'form': form})
 
 
-def view_form(request, form_id):
+def view_form(request, inst_id, form_id):
     consent = get_object_or_404(PatientConsent, pk=form_id)
 
     def display_prompt():
@@ -70,7 +83,7 @@ def view_form(request, form_id):
 
     def display_form():
         password = request.COOKIES.get(f"consent_id_{consent.id}_password")
-        return render(request, 'consent/view_consent.html', {"consent": consent, "password": password})
+        return render(request, 'consent/view_consent.html', {"consent": consent, "password": password, "inst_id": inst_id})
 
     if request.method == 'POST':
         # user is trying to submit password
@@ -95,7 +108,7 @@ def view_form(request, form_id):
 
 @login_required
 @permission_required("consent.change_patientconsent")
-def edit_form(request, form_id):
+def edit_form(request, inst_id, form_id):
     consent: PatientConsent = get_object_or_404(PatientConsent, pk=form_id)
     if consent.has_any_signature:  # form is final
         return redirect("view_consent_form", form_id=form_id)
@@ -111,7 +124,7 @@ def edit_form(request, form_id):
     return render(request, 'consent/new_consent.html', {'form': form})
 
 
-def view_signature(request, form_id, signature_type):
+def view_signature(request, inst_id, form_id, signature_type):
     consent = get_object_or_404(PatientConsent, pk=form_id)
     if signature_type == "patient":
         signature = consent.patient_signature
@@ -135,14 +148,14 @@ def view_signature(request, form_id, signature_type):
                 elif signature_type == "witness":
                     consent.witness_signature = request.FILES['signature']
                 consent.save()
-                return redirect("view_consent_form", form_id=form_id)
+                return redirect("view_consent_form", inst_id=inst_id, form_id=form_id)
         else:
             form = SignatureForm()
 
         return render(request, "consent/new_signature.html",
                       {"form": form, "consent": consent, "signature_type": signature_type})
     else:
-        return redirect("view_consent_form", form_id=form_id)
+        return redirect("view_consent_form", inst_id=inst_id, form_id=form_id)
 
 
 @login_required

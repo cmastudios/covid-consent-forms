@@ -1,12 +1,17 @@
 import mimetypes
 import os
 import uuid
+import os
+import mimetypes
 
 from django.contrib.auth.models import User
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
 from django.conf import settings
+from django.core.exceptions import ValidationError
+
+from portal.models import Institution
 
 CONSENT_STATUS = (
     (1, "Consent given by patient"),
@@ -49,6 +54,7 @@ class Operation(models.Model):
 
 
 class PatientConsent(models.Model):
+    institution = models.ForeignKey(Institution, null=True, on_delete=models.CASCADE)
     creator = models.ForeignKey(User, null=True, on_delete=models.DO_NOTHING)
     consent_type = models.ForeignKey(Operation, on_delete=models.DO_NOTHING)
 

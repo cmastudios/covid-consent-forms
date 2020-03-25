@@ -25,8 +25,8 @@ def landing(request):
 
 
 urlpatterns = [
-    path('', landing),
-    path('consent/', include('consent.urls')),
+    # path('', landing),
+    path('', include('consent.urls')),
     path('portal/', include('portal.urls')),
     path('admin/', admin.site.urls),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

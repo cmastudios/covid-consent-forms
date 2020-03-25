@@ -1,7 +1,8 @@
 {% extends 'consent/base.html' %} {% load bootstrap3 %}
 {% block title %}Sign{% endblock %} {% block content %}
-<p>Upload a traditional signature (picture of your handwritten signature) or a video signature (audio/video presentation of consent).</p>
+<p>Hand draw a signauture or upload a audio/video presentation of consent.</p>
 <p>You are signing {{ consent }} as a {{ signature_type }}.</p>
+<canvas id="signature_input"></canvas>
 <form method="post" enctype="multipart/form-data" class="input-group">
     {% csrf_token %}
     {% bootstrap_form form %}
@@ -11,4 +12,38 @@
         </button>
     {% endbuttons %}
 </form>
+<script>
+    let canvas = document.getElementById("signature_input");
+    let mc = new Hammer(canvas);
+    let lastMouseX, lastMouseY;
+    let drawColor = "black";
+    let thickness = 1;
+
+    mc.get('pan').set({ direction: Hammer.DIRECTION_ALL });
+    mc.on('panstart', function (ev) {
+        lastMouseX = ev.pointers[0].pageX - canvas.offsetLeft;
+        lastMouseY = ev.pointers[0].pageY - canvas.offsetTop;
+    });
+    mc.on('panmove', function (ev) {
+        // Draw a continuous stroke
+        var context = canvas.getContext("2d");
+        context.beginPath();
+        context.moveTo(lastMouseX, lastMouseY);
+        lastMouseX = ev.pointers[0].pageX - canvas.offsetLeft;
+        lastMouseY = ev.pointers[0].pageY - canvas.offsetTop;
+        context.lineTo(lastMouseX, lastMouseY);
+        context.strokeStyle = drawColor;
+        context.lineCap = "round";
+        context.lineWidth = thickness;
+        context.stroke();
+    });
+</script>
+<style>
+    #signature_input {
+        border: 1px solid black;
+        box-shadow: black;
+        min-width: 500px;
+        height: 80px;
+    }
+</style>
 {% endblock %}

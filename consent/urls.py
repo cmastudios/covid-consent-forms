@@ -8,8 +8,8 @@ urlpatterns = [
     path('operation/create/', views.new_operation, name='new_operation'),
     path('operation/<int:operation_id>/', views.view_operation, name='view_operation'),
     path('operation/<int:operation_id>/delete/', views.delete_operation, name='delete_operation'),
-    path('patient_form/create/', views.new_form, name='new_consent_form'),
-    path('patient_form/<int:form_id>/', views.view_form, name='view_consent_form'),
-    path('patient_form/<int:form_id>/edit/', views.edit_form, name='edit_consent_form'),
-    path('patient_form/<int:form_id>/signature/<str:signature_type>/', views.view_signature, name='view_signature'),
+    path('<str:inst_id>/create/', views.new_form, name='new_consent_form'),
+    path('<str:inst_id>/<int:form_id>/', views.view_form, name='view_consent_form'),
+    path('<str:inst_id>/<int:form_id>/edit/', views.edit_form, name='edit_consent_form'),
+    path('<str:inst_id>/<int:form_id>/signature/<str:signature_type>/', views.view_signature, name='view_signature'),
 ]
