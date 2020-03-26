@@ -19,7 +19,7 @@
 </div>
 <ul class="list-group">
 {% for form in consent_forms %}
-    <li class="list-group-item"><a href="{% url 'view_consent_form' institution.identifier form.id %}">
+    <li class="list-group-item"><a href="{% url 'view_consent_form' institution.identifier form.identifier %}">
     {{ form.today_date }} :: {{ form.patient_name }}</a></li>
 {% endfor %}
 </ul>

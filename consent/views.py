@@ -68,9 +68,9 @@ def new_form(request, inst_id):
             set_authorized_to_view_form(request, consent.id)
             # prevent resubmission
             rotate_token(request)
-            response = render(request, 'consent/new_consent_created.html', {'id': consent.id, 'password': password, 'inst_id': inst_id})
+            response = render(request, 'consent/new_consent_created.html', {'id': consent.identifier, 'password': password, 'inst_id': inst_id})
             # 172800 seconds = 48.0 hours
-            response.set_cookie(key=f"consent_id_{consent.id}_password", value=password, max_age=172800)
+            response.set_cookie(key=f"consent_id_{consent.identifier}_password", value=password, max_age=172800)
             return response
     else:
         form = ConsentForm(initial={'consenting_physician': f'{request.user.first_name} {request.user.last_name}'})
@@ -78,13 +78,13 @@ def new_form(request, inst_id):
 
 
 def view_form(request, inst_id, form_id):
-    consent = get_object_or_404(PatientConsent, pk=form_id)
+    consent = get_object_or_404(PatientConsent, identifier=form_id)
 
     def display_prompt():
         return render(request, 'consent/check_consent_auth.html', {"form": form})
 
     def display_form():
-        password = request.COOKIES.get(f"consent_id_{consent.id}_password")
+        password = request.COOKIES.get(f"consent_id_{consent.identifier}_password")
         return render(request, 'consent/view_consent.html', {"consent": consent, "password": password, "inst_id": inst_id})
 
     if request.method == 'POST':
@@ -92,13 +92,13 @@ def view_form(request, inst_id, form_id):
         form = ConsentFormAuthorization(request.POST, instance=consent)
         if form.is_valid():
             # correct password
-            set_authorized_to_view_form(request, form_id)
+            set_authorized_to_view_form(request, consent.id)
             return display_form()
         else:
             # incorrect password
             return display_prompt()
 
-    elif check_authorized_to_view_form(request, form_id):
+    elif check_authorized_to_view_form(request, consent.id):
         # user has already successfully entered password
         return display_form()
 
@@ -111,23 +111,23 @@ def view_form(request, inst_id, form_id):
 @login_required
 @permission_required("consent.change_patientconsent")
 def edit_form(request, inst_id, form_id):
-    consent: PatientConsent = get_object_or_404(PatientConsent, pk=form_id)
+    consent: PatientConsent = get_object_or_404(PatientConsent, identifier=form_id)
     if consent.has_any_signature:  # form is final
-        return redirect("view_consent_form", form_id=form_id)
+        return redirect("view_consent_form", inst_id=inst_id, form_id=form_id)
 
     if request.method == 'POST':
         form = ConsentForm(request.POST, request.FILES, instance=consent)
         if form.is_valid():
             # save new operation
             consent = form.save()
-            return redirect("view_consent_form", form_id=consent.id)
+            return redirect("view_consent_form", inst_id=inst_id, form_id=consent.identifier)
     else:
         form = ConsentForm(instance=consent)
     return render(request, 'consent/new_consent.html', {'form': form})
 
 
 def view_signature(request, inst_id, form_id, signature_type):
-    consent = get_object_or_404(PatientConsent, pk=form_id)
+    consent = get_object_or_404(PatientConsent, identifier=form_id)
     if signature_type == "patient":
         signature = consent.patient_signature
     elif signature_type == "physician":

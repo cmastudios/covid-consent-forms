@@ -3,6 +3,7 @@ import os
 import uuid
 import os
 import mimetypes
+import random
 
 from django.contrib.auth.models import User
 from django.db import models
@@ -31,6 +32,11 @@ ABLE_TO_CONSENT = {
     (2, "No")
 }
 
+#[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+# for 10: rand.choice
+
+def generate_form_id(*args, **kwargs):
+    return f"{random.randint(1, 9)}{random.randint(0, 999999999):09d}"
 
 def get_form_type_file_path(instance, filename):
     ext = filename.split('.')[-1]
@@ -54,6 +60,8 @@ class Operation(models.Model):
 
 
 class PatientConsent(models.Model):
+    identifier = models.CharField(max_length=10, default=generate_form_id, unique=True)
+
     institution = models.ForeignKey(Institution, null=True, on_delete=models.CASCADE)
     creator = models.ForeignKey(User, null=True, on_delete=models.DO_NOTHING)
     consent_type = models.ForeignKey(Operation, on_delete=models.DO_NOTHING)
