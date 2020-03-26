@@ -3,6 +3,7 @@ import mimetypes
 from django import forms
 from django.contrib.auth.hashers import check_password
 from django.core.exceptions import ValidationError
+from django.core.validators import FileExtensionValidator
 from django.forms import ModelForm, Form, FileField, TextInput
 
 from .models import PatientConsent, Operation
@@ -38,12 +39,7 @@ class OperationForm(ModelForm):
 
 
 class SignatureForm(Form):
-    signature = FileField()
-
-    def clean(self):
-        if "image" not in mimetypes.guess_type(str(self.cleaned_data["signature"]))[0] and "video" not in mimetypes.guess_type(str(self.cleaned_data["signature"]))[0]:
-            raise forms.ValidationError('Only images and videos allowed!')
-        return self.cleaned_data["signature"]
+    signature = FileField(validators=[FileExtensionValidator(allowed_extensions=['mov', 'mp4', 'png'])])
 
 
 class ConsentFormAuthorization(ModelForm):

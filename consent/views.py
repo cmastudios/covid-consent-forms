@@ -8,6 +8,8 @@ from django.middleware.csrf import rotate_token
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required, permission_required
 from django.utils import timezone
+from django.http import JsonResponse
+from django.urls import reverse
 
 from .models import Operation, PatientConsent
 from .forms import ConsentForm, OperationForm, SignatureForm, ConsentFormAuthorization
@@ -148,6 +150,7 @@ def view_signature(request, inst_id, form_id, signature_type):
                 elif signature_type == "witness":
                     consent.witness_signature = request.FILES['signature']
                 consent.save()
+
                 return redirect("view_consent_form", inst_id=inst_id, form_id=form_id)
         else:
             form = SignatureForm()
