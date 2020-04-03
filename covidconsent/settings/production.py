@@ -21,7 +21,7 @@ CONN_MAX_AGE = int(os.getenv('CONSENT_CONN_AGE', '300'))
 
 # where to store uploaded files, must be writable
 MEDIA_URL = 'https://s3-us-west-2.amazonaws.com/consentformmedia.innovationdx.com/'
-MEDIAFILE_STORAGE = 'consent.s3_storage.MediaStorage'
+DEFAULT_FILE_STORAGE = 'consent.s3_storage.MediaStorage'
 
 # where to store static files with 'manage.py collectstatic'
 STATIC_URL = 'https://s3-us-west-2.amazonaws.com/consentformstatic.innovationdx.com/'
