@@ -32,7 +32,8 @@ INSTALLED_APPS = [
     'consent.apps.ConsentConfig',
     'portal.apps.PortalConfig',
     'bootstrap3',
-    'crispy_forms'
+    'crispy_forms',
+    'storages'
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
@@ -110,9 +111,15 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
-STATIC_URL = '/static/'
-MEDIA_URL = '/media/'
+STATIC_URL = 'consentformstatic.innovationdx.com/'
+STATICFILES_STORAGE = 'consent.s3_storage.StaticStorage'
 
+MEDIA_URL = 'https://s3-us-west-2.amazonaws.com/consentformmedia.innovationdx.com/'
+MEDIAFILE_STORAGE = 'consent.s3_storage.MediaStorage'
+
+################ DJANGO STORAGE with S3 #################
+
+###############  LOGIN STUFF ################
 LOGIN_URL = '/portal/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/portal/login/'

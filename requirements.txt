@@ -3,3 +3,5 @@ Django
 django-bootstrap3
 mysqlclient
 django-crispy-forms
+django-storages
+boto3
