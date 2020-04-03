@@ -111,13 +111,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
-STATIC_URL = 'consentformstatic.innovationdx.com/'
-STATICFILES_STORAGE = 'consent.s3_storage.StaticStorage'
 
-MEDIA_URL = 'https://s3-us-west-2.amazonaws.com/consentformmedia.innovationdx.com/'
-MEDIAFILE_STORAGE = 'consent.s3_storage.MediaStorage'
-
-################ DJANGO STORAGE with S3 #################
+STATIC_URL = '/static/'
+MEDIA_URL = '/media/'
 
 ###############  LOGIN STUFF ################
 LOGIN_URL = '/portal/login/'

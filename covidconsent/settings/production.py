@@ -20,10 +20,12 @@ DATABASES = {
 CONN_MAX_AGE = int(os.getenv('CONSENT_CONN_AGE', '300'))
 
 # where to store uploaded files, must be writable
-MEDIA_ROOT = os.environ['CONSENT_MEDIA']
+MEDIA_URL = 'https://s3-us-west-2.amazonaws.com/consentformmedia.innovationdx.com/'
+MEDIAFILE_STORAGE = 'consent.s3_storage.MediaStorage'
 
 # where to store static files with 'manage.py collectstatic'
-STATIC_ROOT = os.environ['CONSENT_STATIC']
+STATIC_URL = 'https://s3-us-west-2.amazonaws.com/consentformstatic.innovationdx.com/'
+STATICFILES_STORAGE = 'consent.s3_storage.StaticStorage'
 
 # email server settings
 EMAIL_HOST = os.getenv('SMTP_HOST', 'localhost')
