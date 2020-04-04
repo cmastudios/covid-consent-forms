@@ -36,7 +36,7 @@
     {% if consent.has_patient_signature %}
     <div class="alert alert-success" role="alert">
         Successfully signed by {{ consent.representative_name }} ({{ consent.relationship_to_patient }}).
-        <a class="alert-link" href="{{ MEDIA_URL }}{{ consent.patient_signature }}">View attached signature</a>.
+        <a class="alert-link" href="{{ consent.patient_signature.url }}">View attached signature</a>.
     </div>
     {% else %}
     <div class="alert alert-danger" role="alert">
@@ -52,7 +52,7 @@
     {% if consent.has_patient_signature %}
     <div class="alert alert-success" role="alert">
         Successfully signed by patient.
-        <a class="alert-link" href="{{ MEDIA_URL }}{{ consent.patient_signature }}">View attached signature</a>.
+        <a class="alert-link" href="{{ consent.patient_signature.url }}">View attached signature</a>.
     </div>
     {% else %}
     <div class="alert alert-danger" role="alert">
@@ -65,7 +65,7 @@
     {% if consent.has_physician_signature %}
     <div class="alert alert-success" role="alert">
         Successfully signed by physician: {{ consent.consenting_physician }}.
-        <a class="alert-link" href="{{ MEDIA_URL }}{{ consent.physician_signature }}">View attached signature</a>.
+        <a class="alert-link" href="{{ consent.physician_signature.url }}">View attached signature</a>.
     </div>
     {% else %}
     <div class="alert alert-danger" role="alert">
@@ -77,7 +77,7 @@
     {% if consent.has_witness_signature %}
     <div class="alert alert-success" role="alert">
         Successfully signed by witness: {{ consent.witness_name }}.
-        <a class="alert-link" href="{{ MEDIA_URL }}{{ consent.witness_signature }}">View attached signature</a>.
+        <a class="alert-link" href="{{ consent.witness_signature.url }}">View attached signature</a>.
     </div>
     {% else %}
     <div class="alert alert-danger" role="alert">
